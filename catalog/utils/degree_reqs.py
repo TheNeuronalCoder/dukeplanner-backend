@@ -1,26 +1,27 @@
 """B.A./B.S. degree requirements (philosophy, foreign language, quantitative,
 scientific literacy) evaluated against taken courses.
 
-The requirements live in data/degree_requirements.json. Each matches courses by
+The requirements live in data/degree_requirements.yaml. Each matches courses by
 subject, optionally limited to listed numbers or a minimum number. A course used
 for General Education can't also count, and each course counts toward at most
 one degree requirement.
 """
-import json
 import re
 from functools import lru_cache
 from pathlib import Path
 
+import yaml
+
 from .courses import course_credits, course_number
 from .status import SATISFIED, UNSATISFIED
 
-DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "degree_requirements.json"
+DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "degree_requirements.yaml"
 
 
 @lru_cache(maxsize=1)
 def load():
     with open(DATA_PATH) as f:
-        data = json.load(f)
+        data = yaml.safe_load(f)
     for req in data["requirements"]:
         req["_pattern"] = re.compile(req["placeholder_pattern"], re.IGNORECASE)
     return data

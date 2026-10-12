@@ -1,0 +1,211 @@
+# Rules for validating a Duke Planner account against JMU policy.
+# Loaded by account/validation.py. Every slug is a Program.slug from the catalog
+# (catalog.jmu.edu/programs/<slug>/). Run validation.check_config() after editing to
+# catch typos in slugs.
+
+# --------------------------------------------------------------------------- #
+# Semesters and classes
+# --------------------------------------------------------------------------- #
+semesters:
+  min_year: 1908          # JMU was founded in 1908
+  max_years_ahead: 10     # how far into the future a planned semester may be
+
+classes:
+  require_at_least_one: false   # true = an account with no classes is not set up
+
+# --------------------------------------------------------------------------- #
+# Program types
+# Maps every Program.type in the catalog to a kind and a normalized degree.
+# kind: degree | minor | certificate | other
+# Types missing from this map fall back to a guess from the type string.
+# --------------------------------------------------------------------------- #
+program_types:
+  # Undergraduate degrees
+  "B.A.":                                         {kind: degree, degree: "B.A."}
+  "B.A.; Major in Global Religions and Cultures": {kind: degree, degree: "B.A."}
+  "B.A.; Major in Philosophy":                    {kind: degree, degree: "B.A."}
+  "B.B.A.":                                       {kind: degree, degree: "B.B.A."}
+  "B.F.A.":                                       {kind: degree, degree: "B.F.A."}
+  "B.I.S.":                                       {kind: degree, degree: "B.I.S."}
+  "B.M.":                                         {kind: degree, degree: "B.M."}
+  "B.S.":                                         {kind: degree, degree: "B.S."}
+  "B.S.N.":                                       {kind: degree, degree: "B.S.N."}
+  "R.N. to B.S.N.":                               {kind: degree, degree: "B.S.N."}
+  "B.S.W.":                                       {kind: degree, degree: "B.S.W."}
+  # Graduate degrees
+  "M.A.":         {kind: degree, degree: "M.A."}
+  "M.A./Ed.S.":   {kind: degree, degree: "M.A./Ed.S."}
+  "M.A.T.":       {kind: degree, degree: "M.A.T."}
+  "M.B.A.":       {kind: degree, degree: "M.B.A."}
+  "M.Ed.":        {kind: degree, degree: "M.Ed."}
+  "M.Ed":         {kind: degree, degree: "M.Ed."}
+  "M.Ed./Ed.S.":  {kind: degree, degree: "M.Ed./Ed.S."}
+  "M.F.A.":       {kind: degree, degree: "M.F.A."}
+  "M.M.":         {kind: degree, degree: "M.M."}
+  "M.O.T.":       {kind: degree, degree: "M.O.T."}
+  "M.P.A.":       {kind: degree, degree: "M.P.A."}
+  "M.P.A.S.":     {kind: degree, degree: "M.P.A.S."}
+  "M.S.":         {kind: degree, degree: "M.S."}
+  "M.S.A.T.":     {kind: degree, degree: "M.S.A.T."}
+  "M.S.Ed.":      {kind: degree, degree: "M.S.Ed."}
+  "M.S.N.":       {kind: degree, degree: "M.S.N."}
+  "Au.D.":        {kind: degree, degree: "Au.D."}
+  "D.M.A.":       {kind: degree, degree: "D.M.A."}
+  "D.N.P.":       {kind: degree, degree: "D.N.P."}
+  "Ed.D.":        {kind: degree, degree: "Ed.D."}
+  "Ph.D.":        {kind: degree, degree: "Ph.D."}
+  "Psy.D.":       {kind: degree, degree: "Psy.D."}
+  # Everything else
+  "minor":               {kind: minor}
+  "certificate":         {kind: certificate}
+  "preparation program": {kind: other}   # teaching licensure, pre-law, pre-theology
+  "non-degree program":  {kind: other}   # ROTC, studies abroad, European Business
+
+# Per-program corrections where the scraped type is wrong.
+program_overrides:
+  # A B.S. degree; scraped as "minor" because "Minor" appears in its name.
+  quantitative-finance-major-a-minor-economics-mathematics-bs: {kind: degree, degree: "B.S."}
+
+# --------------------------------------------------------------------------- #
+# Same area: a minor may not be declared alongside a degree in the same group.
+# JMU: "students may not earn a major and minor in the same area."
+# Groups were built from program names, then checked against catalog descriptions.
+# --------------------------------------------------------------------------- #
+same_area:
+  - [anthropology-minor, anthropology-ba, anthropology-bs]
+  - [art-minor, art-ba, art-bfa, art-bs, art-architectural-design-major-bfa,
+     art-graphic-design-major-bfa, art-industrial-design-major-bs]
+  - [art-history-minor, art-history-ba]
+  - [biology-minor, biology-ba, biology-bs]
+  # "The chemistry minor is not open to students majoring in chemistry or biophysical chemistry."
+  - [chemistry-minor, chemistry-bs, chemistry-biophysical-chemistry-major-bs]
+  - [communication-studies-minor, communication-studies-ba, communication-studies-bs]
+  - [computer-information-systems-minor, computer-information-systems-bba]
+  - [computer-science-minor, computer-science-bs]
+  - [dance-minor, theatre-dance-major-ba]
+  - [economics-minor, economics-ba, economics-bba, economics-bs]
+  - [english-minor, english-ba]
+  - [geography-minor, geography-ba, geography-bs]
+  - [geology-minor, geology-ba, geology-bs, geology-environmental-earth-science-ba,
+     geology-environmental-earth-science-bs]
+  - [global-religions-cultures-minor, philosophy-religion-ba-major-global-religions-cultures]
+  - [history-minor, history-ba]
+  - [integrated-science-technology-minor, integrated-science-technology-bs]
+  - [mathematics-minor, mathematics-ba, mathematics-bs, quantitative-finance-mathematics-double-major-bs]
+  - [philosophy-minor, philosophy-religion-ba-major-philosophy]
+  - [physics-minor, physics-minor-engineers, physics-ba, physics-bs]
+  - [political-science-minor, political-science-ba]
+  - [sociology-minor, sociology-ba, sociology-bs]
+  - [statistics-minor, statistics-bs]
+  - [theatre-minor, theatre-ba, theatre-dance-major-ba, theatre-musical-theatre-major-ba]
+  - [writing-rhetoric-technical-communication-minor, writing-rhetoric-technical-communication-ba,
+     writing-rhetoric-technical-communication-bs]
+  # Not grouped on purpose: Modern Foreign Languages B.A. + Modern Foreign Language minor is
+  # allowed in a *different* language ("a student may not major and minor in the same language"),
+  # which depends on the chosen languages, not the programs.
+
+# --------------------------------------------------------------------------- #
+# Same major: at most one degree from each group. A double major or double degree
+# needs two different majors, so the B.A. and B.S. of one major can't be combined.
+# --------------------------------------------------------------------------- #
+same_major:
+  - [anthropology-ba, anthropology-bs]
+  - [art-ba, art-bfa, art-bs]
+  - [biology-ba, biology-bs]
+  # "Students cannot major in both Chemistry and Biophysical Chemistry."
+  - [chemistry-bs, chemistry-biophysical-chemistry-major-bs]
+  - [communication-sciences-disorders-ba, communication-sciences-disorders-bs]
+  - [communication-studies-ba, communication-studies-bs]
+  - [economics-ba, economics-bba, economics-bs]
+  - [geography-ba, geography-bs]
+  # "Students may not major in both Geology and Environmental Earth Science."
+  - [geology-ba, geology-bs, geology-environmental-earth-science-ba, geology-environmental-earth-science-bs]
+  - [individualized-study-ba, individualized-study-bis, individualized-study-bs]
+  - [individualized-study-ba-a-major-general-studies, individualized-study-bs-a-major-general-studies]
+  - [individualized-study-ba-a-major-independent-scholars, individualized-study-bs-a-major-independent-scholars]
+  - [justice-studies-ba, justice-studies-bs]
+  - [mathematics-ba, mathematics-bs, quantitative-finance-mathematics-double-major-bs]
+  - [media-arts-design-ba, media-arts-design-bs]
+  - [music-ba, music-bm]
+  - [nursing-bsn, nursing-rn-bsn]
+  - [physics-ba, physics-bs]
+  - [psychology-ba, psychology-bs]
+  - [quantitative-finance-major-a-minor-economics-mathematics-bs, quantitative-finance-mathematics-double-major-bs]
+  - [sociology-ba, sociology-bs]
+  - [writing-rhetoric-technical-communication-ba, writing-rhetoric-technical-communication-bs]
+
+# --------------------------------------------------------------------------- #
+# Excluded combinations: no program in `a` may be combined with any program in `b`.
+# --------------------------------------------------------------------------- #
+excluded_combinations:
+  - a: [justice-studies-ba, justice-studies-bs]
+    b: [criminal-justice-minor]
+    message: "Justice Studies majors may not declare the Criminal Justice minor."
+    source: https://catalog.jmu.edu/programs/criminal-justice-minor/
+  - a: [biotechnology-bs]
+    b: [biochemistry-molecular-biology-minor]
+    message: "Biotechnology majors are not eligible for the Biochemistry and Molecular Biology minor."
+    source: https://catalog.jmu.edu/programs/biotechnology-bs/
+  - a: [biotechnology-bs]
+    b: [biology-ba, biology-bs]
+    message: "Students may not major in both Biology and Biotechnology."
+    source: https://catalog.jmu.edu/programs/biotechnology-bs/
+  - a: [biotechnology-bs]
+    b: [chemistry-bs, chemistry-biophysical-chemistry-major-bs]
+    message: "Biotechnology majors may not double major in Chemistry."
+    source: https://catalog.jmu.edu/programs/biotechnology-bs/
+  - a: [biotechnology-bs]
+    b: [integrated-science-technology-bs]
+    message: "Biotechnology majors may not double major in ISAT."
+    source: https://catalog.jmu.edu/programs/biotechnology-bs/
+
+# --------------------------------------------------------------------------- #
+# Requires: `program` is only allowed (or only complete) alongside one of `any_of`.
+# severity: error (not allowed) or warning (allowed, but something is missing).
+# --------------------------------------------------------------------------- #
+requires:
+  - program: illustration-minor
+    any_of: [art-ba, art-bfa, art-bs, art-architectural-design-major-bfa,
+             art-graphic-design-major-bfa, art-industrial-design-major-bs, art-history-ba]
+    severity: error
+    message: "The Illustration minor is for majors in the School of Art, Design and Art History."
+    source: https://catalog.jmu.edu/programs/illustration-minor/
+  - program: leadership-military-affairs-minor-air-force
+    any_of: [air-force-reserve-officers-training-corps]
+    severity: error
+    message: "The Leadership in Military Affairs minor is only available to AFROTC cadets."
+    source: https://catalog.jmu.edu/programs/leadership-military-affairs-minor-air-force/
+  - program: military-leadership-minor
+    any_of: [military-science]
+    severity: error
+    message: "The Military Leadership minor is only available to Army ROTC cadets."
+    source: https://catalog.jmu.edu/programs/military-leadership-minor/
+  - program: quantitative-finance-major-a-minor-economics-mathematics-bs
+    any_of: [economics-minor]
+    severity: warning
+    message: "The Quantitative Finance major requires an Economics minor; add it to your programs."
+    source: https://catalog.jmu.edu/programs/quantitative-finance-major-a-minor-economics-mathematics-bs/
+  - program: quantitative-finance-major-a-minor-economics-mathematics-bs
+    any_of: [mathematics-minor]
+    severity: warning
+    message: "The Quantitative Finance major requires a Mathematics minor; add it to your programs."
+    source: https://catalog.jmu.edu/programs/quantitative-finance-major-a-minor-economics-mathematics-bs/
+
+# --------------------------------------------------------------------------- #
+# Track rules: apply when a StudentProgram's track name matches `track_pattern`
+# (a case-insensitive regex). Tracks that don't match are skipped, so differently
+# named tracks never cause false errors.
+#   forbidden_with: error if the account has any of these programs
+#   requires_any_of: error unless the account has one of these programs
+# --------------------------------------------------------------------------- #
+track_rules:
+  - program: statistics-minor
+    track_pattern: 'option\s*[12]\b'
+    forbidden_with: [mathematics-ba, mathematics-bs, quantitative-finance-mathematics-double-major-bs]
+    message: "Statistics minor Options 1 and 2 are not open to Mathematics majors (use Option 3)."
+    source: https://catalog.jmu.edu/programs/statistics-minor/
+  - program: statistics-minor
+    track_pattern: 'option\s*3\b'
+    requires_any_of: [mathematics-ba, mathematics-bs, quantitative-finance-mathematics-double-major-bs]
+    message: "Statistics minor Option 3 is only open to Mathematics majors."
+    source: https://catalog.jmu.edu/programs/statistics-minor/

@@ -1,0 +1,87 @@
+name: Bachelor of Arts and Bachelor of Science Degree Requirements
+catalog_year: "2026-2027"
+sources:
+  - https://catalog.jmu.edu/undergraduate-degree-requirements-james-madison-university/
+  - https://www.jmu.edu/registrar/ba_and_bs_degree_courses.shtml
+notes:
+  - If a student uses a course to satisfy a General Education requirement, they may not also use that same course to satisfy a B.A. or B.S. degree requirement.
+
+requirements:
+  - id: philosophy
+    name: Philosophy requirement
+    degree: B.A.
+    placeholder_pattern: '^\s*philosophy\b'
+    min_credits: 3
+    notes:
+      - Any PHIL course except PHIL 120 or PHIL 150.
+    match:
+      - {subject: PHIL}
+    exclude: [PHIL 120, PHIL 150]
+
+  - id: foreign_language
+    name: Foreign language requirement
+    degree: B.A.
+    placeholder_pattern: '^\s*foreign language\b'
+    min_count: 1
+    notes:
+      - Satisfied by completing a foreign language course numbered 232 or above (101, 102 and 231 are prerequisites for 232), or by placing out of the language through the Department of World Languages and Cultures placement test.
+      - American Sign Language (ASL 232 or above) can be used.
+    match:
+      - {subject: ARAB, number_min: 232}
+      - {subject: ASL, number_min: 232}
+      - {subject: CHIN, number_min: 232}
+      - {subject: FR, number_min: 232}
+      - {subject: GER, number_min: 232}
+      - {subject: GRK, number_min: 232}
+      - {subject: ITAL, number_min: 232}
+      - {subject: JAPN, number_min: 232}
+      - {subject: KOR, number_min: 232}
+      - {subject: LAT, number_min: 232}
+      - {subject: PERS, number_min: 232}
+      - {subject: PORT, number_min: 232}
+      - {subject: RUS, number_min: 232}
+      - {subject: SPAN, number_min: 232}
+      - {subject: SWA, number_min: 232}
+    exclude: []
+
+  # Course numbers are quoted so they stay strings.
+  - id: quantitative
+    name: Quantitative requirement
+    degree: B.S.
+    placeholder_pattern: '^\s*quantitative\b'
+    min_credits: 3
+    notes: []
+    match:
+      - {subject: BIO, numbers: ["454", "456"]}
+      - {subject: CS, numbers: ["227", "327", "449", "452"]}
+      - {subject: HTH, numbers: ["320"]}
+      - {subject: ISAT, numbers: ["151", "251"]}
+      - {subject: IA, numbers: ["340"]}
+      - {subject: KIN, numbers: ["411"]}
+      - {subject: MATH}
+    exclude: []
+
+  - id: scientific_literacy
+    name: Scientific literacy requirement
+    degree: B.S.
+    placeholder_pattern: '^\s*scientific literacy\b'
+    min_credits: 3
+    notes: []
+    match:
+      - {subject: ANTH}
+      - {subject: ASTR, numbers: ["120", "121", "220", "221", "297", "301", "320", "480"]}
+      - {subject: BIO}
+      - {subject: CHEM}
+      - {subject: CS, numbers: ["139", "149", "159", "240", "261", "345"]}
+      - {subject: ECON}
+      - {subject: GEOG}
+      - {subject: GEOL}
+      - {subject: HSA, numbers: ["366", "466"]}
+      - {subject: ISAT}
+      - {subject: IA, numbers: ["241", "400"]}
+      - {subject: ISCI}
+      - {subject: KIN, numbers: ["202"]}
+      - {subject: PHYS}
+      - {subject: POSC}
+      - {subject: SOCI}
+    exclude: []

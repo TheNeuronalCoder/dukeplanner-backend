@@ -1,18 +1,19 @@
 """General Education ("The Human Community") evaluation against taken courses.
 
-The requirements live in data/gened.json: clusters made of areas, each area
+The requirements live in data/gened.yaml: clusters made of areas, each area
 requiring `choose` courses from its list.
 """
-import json
 import re
 from functools import lru_cache
 from itertools import combinations
 from pathlib import Path
 
+import yaml
+
 from .courses import course_credits, normalize_code
 from .status import SATISFIED, UNSATISFIED
 
-DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "gened.json"
+DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "gened.yaml"
 
 # Placeholder groups in program requirements that stand for the whole Gen Ed
 # program, e.g. "General Education" or "General Education requirements" (but not
@@ -29,7 +30,7 @@ def is_gened_placeholder(text):
 @lru_cache(maxsize=1)
 def load():
     with open(DATA_PATH) as f:
-        return json.load(f)
+        return yaml.safe_load(f)
 
 
 def cluster_id_for(text):
