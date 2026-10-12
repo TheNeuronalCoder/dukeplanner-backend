@@ -1,0 +1,1024 @@
+[
+  {
+    "pk": "ACTG",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Accounting"
+    }
+  },
+  {
+    "pk": "AHRD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Adult Education Human Resource Development"
+    }
+  },
+  {
+    "pk": "AAAD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "African, African American and Diaspora Studies"
+    }
+  },
+  {
+    "pk": "AIRS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Air Force ROTC"
+    }
+  },
+  {
+    "pk": "ASL",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "American Sign Language"
+    }
+  },
+  {
+    "pk": "AMST",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "American Studies"
+    }
+  },
+  {
+    "pk": "ANTH",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Anthropology"
+    }
+  },
+  {
+    "pk": "MUAP",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Applied Music"
+    }
+  },
+  {
+    "pk": "ARAB",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Arabic"
+    }
+  },
+  {
+    "pk": "ARCD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Architectural Design"
+    }
+  },
+  {
+    "pk": "ART",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Art"
+    }
+  },
+  {
+    "pk": "FDS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Art and Design Foundations"
+    }
+  },
+  {
+    "pk": "ARED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Art Education"
+    }
+  },
+  {
+    "pk": "ARTH",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Art History"
+    }
+  },
+  {
+    "pk": "ARTE",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Arts Entrepreneurship"
+    }
+  },
+  {
+    "pk": "ASTR",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Astronomy"
+    }
+  },
+  {
+    "pk": "ATEP",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Athletic Training Education Program"
+    }
+  },
+  {
+    "pk": "BIO",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Biology"
+    }
+  },
+  {
+    "pk": "BIOT",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Biotechnology"
+    }
+  },
+  {
+    "pk": "BUS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Business"
+    }
+  },
+  {
+    "pk": "BSAN",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Business Analytics"
+    }
+  },
+  {
+    "pk": "BLAW",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Business Law"
+    }
+  },
+  {
+    "pk": "CAL",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "CAL Internship Course"
+    }
+  },
+  {
+    "pk": "CHEM",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Chemistry"
+    }
+  },
+  {
+    "pk": "CHIN",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Chinese"
+    }
+  },
+  {
+    "pk": "CIV",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Civic Leadership"
+    }
+  },
+  {
+    "pk": "CLAS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Classics"
+    }
+  },
+  {
+    "pk": "COB",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "College of Business"
+    }
+  },
+  {
+    "pk": "CISE",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "College of Integrated Science and Engineering"
+    }
+  },
+  {
+    "pk": "CSM",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "College of Science and Mathematics"
+    }
+  },
+  {
+    "pk": "CSD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Communication Sciences and Disorders"
+    }
+  },
+  {
+    "pk": "SCOM",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Communication Studies"
+    }
+  },
+  {
+    "pk": "CIS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Computer Information Systems"
+    }
+  },
+  {
+    "pk": "CS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Computer Science"
+    }
+  },
+  {
+    "pk": "CE",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Continuing Education"
+    }
+  },
+  {
+    "pk": "CRJU",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Criminal Justice"
+    }
+  },
+  {
+    "pk": "CDS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Cross Disciplinary Studies"
+    }
+  },
+  {
+    "pk": "CIEE",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Curriculum, Instruction and Educational Equity"
+    }
+  },
+  {
+    "pk": "DANC",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Dance"
+    }
+  },
+  {
+    "pk": "DATA",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Data Sciences"
+    }
+  },
+  {
+    "pk": "DS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Digital Studies"
+    }
+  },
+  {
+    "pk": "DST",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Disability Studies"
+    }
+  },
+  {
+    "pk": "ECED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Early Childhood Education"
+    }
+  },
+  {
+    "pk": "ECON",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Economics"
+    }
+  },
+  {
+    "pk": "EDUC",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Education"
+    }
+  },
+  {
+    "pk": "ELED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Elementary Education"
+    }
+  },
+  {
+    "pk": "ENGR",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Engineering"
+    }
+  },
+  {
+    "pk": "ENG",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "English"
+    }
+  },
+  {
+    "pk": "ENVT",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Environment"
+    }
+  },
+  {
+    "pk": "ENVM",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Environmental Management"
+    }
+  },
+  {
+    "pk": "EXED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Exceptional Education"
+    }
+  },
+  {
+    "pk": "FAM",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Family"
+    }
+  },
+  {
+    "pk": "FIN",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Finance"
+    }
+  },
+  {
+    "pk": "ARTS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Fine Arts"
+    }
+  },
+  {
+    "pk": "FLED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Foreign Language Education"
+    }
+  },
+  {
+    "pk": "FR",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "French"
+    }
+  },
+  {
+    "pk": "GEOG",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Geography"
+    }
+  },
+  {
+    "pk": "GEOL",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Geology"
+    }
+  },
+  {
+    "pk": "GER",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "German"
+    }
+  },
+  {
+    "pk": "GERN",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Gerontology"
+    }
+  },
+  {
+    "pk": "GRAD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Graduate"
+    }
+  },
+  {
+    "pk": "GRPH",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Graphic Design"
+    }
+  },
+  {
+    "pk": "GRK",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Greek"
+    }
+  },
+  {
+    "pk": "HTH",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Health Sciences"
+    }
+  },
+  {
+    "pk": "HSA",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Health Services Administration"
+    }
+  },
+  {
+    "pk": "HIST",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "History"
+    }
+  },
+  {
+    "pk": "HON",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Honors"
+    }
+  },
+  {
+    "pk": "HM",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Hospitality Management"
+    }
+  },
+  {
+    "pk": "HRD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Human Resource Development"
+    }
+  },
+  {
+    "pk": "HUMN",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Humanitarian Affairs"
+    }
+  },
+  {
+    "pk": "HUM",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Humanities"
+    }
+  },
+  {
+    "pk": "IECE",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Inclusive Early Childhood Education"
+    }
+  },
+  {
+    "pk": "IND",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Independent Scholars"
+    }
+  },
+  {
+    "pk": "IS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Individualized Study"
+    }
+  },
+  {
+    "pk": "INDU",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Industrial Design"
+    }
+  },
+  {
+    "pk": "IT",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Information Technology"
+    }
+  },
+  {
+    "pk": "ISAT",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Integrated Science and Technology"
+    }
+  },
+  {
+    "pk": "IA",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Intelligence Analysis"
+    }
+  },
+  {
+    "pk": "IART",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Interdisciplinary Art"
+    }
+  },
+  {
+    "pk": "IDLS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Interdisiciplinary Liberal Studies"
+    }
+  },
+  {
+    "pk": "INTA",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "International Affairs"
+    }
+  },
+  {
+    "pk": "IB",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "International Business"
+    }
+  },
+  {
+    "pk": "IPE",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Interprofessional Education"
+    }
+  },
+  {
+    "pk": "ISCI",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Interscience Research"
+    }
+  },
+  {
+    "pk": "ITAL",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Italian"
+    }
+  },
+  {
+    "pk": "JAPN",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Japanese"
+    }
+  },
+  {
+    "pk": "JUST",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Justice Studies"
+    }
+  },
+  {
+    "pk": "KIN",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Kinesiology"
+    }
+  },
+  {
+    "pk": "KOR",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Korean"
+    }
+  },
+  {
+    "pk": "LAT",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Latin"
+    }
+  },
+  {
+    "pk": "LAXC",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Latin American, Latinx and Caribbean Studies"
+    }
+  },
+  {
+    "pk": "LEAD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Leadership Studies"
+    }
+  },
+  {
+    "pk": "LEIL",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Leadership, Equity, Innovation and Learning"
+    }
+  },
+  {
+    "pk": "LDT",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Learning, Design and Technology"
+    }
+  },
+  {
+    "pk": "LTLE",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Learning, Technology and Leadership Education"
+    }
+  },
+  {
+    "pk": "LING",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Linguistics"
+    }
+  },
+  {
+    "pk": "LED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Literacy Education"
+    }
+  },
+  {
+    "pk": "MGT",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Management"
+    }
+  },
+  {
+    "pk": "MKTG",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Marketing"
+    }
+  },
+  {
+    "pk": "MBA",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Master Business Administration"
+    }
+  },
+  {
+    "pk": "MATS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Materials Science"
+    }
+  },
+  {
+    "pk": "MAED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Math Education"
+    }
+  },
+  {
+    "pk": "MATH",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Mathematics"
+    }
+  },
+  {
+    "pk": "SMAD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Media Arts and Design"
+    }
+  },
+  {
+    "pk": "MSSE",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Middle and Secondary Education"
+    }
+  },
+  {
+    "pk": "MIED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Middle Education"
+    }
+  },
+  {
+    "pk": "MSCI",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Military Science"
+    }
+  },
+  {
+    "pk": "MUS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Music"
+    }
+  },
+  {
+    "pk": "MUED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Music Education"
+    }
+  },
+  {
+    "pk": "MUI",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Music Industry"
+    }
+  },
+  {
+    "pk": "MUPED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Music Pedagogy"
+    }
+  },
+  {
+    "pk": "NPS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Nonprofit Studies"
+    }
+  },
+  {
+    "pk": "NSG",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Nursing"
+    }
+  },
+  {
+    "pk": "NUTR",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Nutrition"
+    }
+  },
+  {
+    "pk": "OT",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Occupational Therapy"
+    }
+  },
+  {
+    "pk": "PERS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Persian"
+    }
+  },
+  {
+    "pk": "PHIL",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Philosophy"
+    }
+  },
+  {
+    "pk": "PA",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Physician Assistant Studies"
+    }
+  },
+  {
+    "pk": "PHYS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Physics"
+    }
+  },
+  {
+    "pk": "POSC",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Political Science"
+    }
+  },
+  {
+    "pk": "PORT",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Portuguese"
+    }
+  },
+  {
+    "pk": "PSYC",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Psychology"
+    }
+  },
+  {
+    "pk": "PUAD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Public Administration"
+    }
+  },
+  {
+    "pk": "PPA",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Public Policy and Administration"
+    }
+  },
+  {
+    "pk": "QUST",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Queer Studies"
+    }
+  },
+  {
+    "pk": "REL",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Religion"
+    }
+  },
+  {
+    "pk": "RUS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Russian"
+    }
+  },
+  {
+    "pk": "ADSU",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "School Administration"
+    }
+  },
+  {
+    "pk": "STAD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "School of Theatre and Dance"
+    }
+  },
+  {
+    "pk": "SJS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Social Justice Studies"
+    }
+  },
+  {
+    "pk": "SOWK",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Social Work"
+    }
+  },
+  {
+    "pk": "SOCI",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Sociology"
+    }
+  },
+  {
+    "pk": "SPAN",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Spanish"
+    }
+  },
+  {
+    "pk": "SLCP",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Spanish Language and Culture Program"
+    }
+  },
+  {
+    "pk": "SRL",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Sport and Recreation Leadership"
+    }
+  },
+  {
+    "pk": "SRM",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Sport and Recreation Management"
+    }
+  },
+  {
+    "pk": "SWA",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Swahili"
+    }
+  },
+  {
+    "pk": "TCLD",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Teacher Leadership"
+    }
+  },
+  {
+    "pk": "TESL",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Teaching English to Speakers of Other Languages"
+    }
+  },
+  {
+    "pk": "THEA",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Theatre"
+    }
+  },
+  {
+    "pk": "UNST",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "University Studies"
+    }
+  },
+  {
+    "pk": "VOED",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Vocational Education"
+    }
+  },
+  {
+    "pk": "WGSS",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Women's, Gender and Sexuality Studies"
+    }
+  },
+  {
+    "pk": "WLC",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "World Languages and Cultures"
+    }
+  },
+  {
+    "pk": "WRTC",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Writing, Rhetoric, and Technical Communication"
+    }
+  },
+  {
+    "pk": "YTHJ",
+    "model": "catalog.subject",
+    "fields": {
+      "name": "Youth Justice"
+    }
+  }
+]

@@ -1,0 +1,3070 @@
+[
+  {
+    "pk": 1,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 15,
+      "subject": "ACTG",
+      "number_min": 500,
+      "number_max": 699,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 2,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 35,
+      "subject": "ANTH",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 3,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 49,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 4,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 56,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 5,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 61,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 6,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 77,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 7,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 84,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 8,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 89,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 9,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 101,
+      "subject": "ARTH",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 10,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 118,
+      "subject": "ARTH",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 11,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 119,
+      "subject": "ART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 12,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 138,
+      "subject": "ARTH",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 13,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 138,
+      "subject": "ART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 14,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 149,
+      "subject": "ART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 15,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 149,
+      "subject": "FDS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 16,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 151,
+      "subject": "ART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 17,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 153,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 18,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 172,
+      "subject": "ARTH",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 19,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 174,
+      "subject": "ART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 20,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 194,
+      "subject": "ART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 21,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 194,
+      "subject": "FDS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 22,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 196,
+      "subject": "ART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 23,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 198,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 24,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 213,
+      "subject": "ART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 25,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 214,
+      "subject": "ARTH",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 26,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 226,
+      "subject": "ART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 27,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 236,
+      "subject": "ART",
+      "number_min": 500,
+      "number_max": 899,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 28,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 236,
+      "subject": "ARTH",
+      "number_min": 500,
+      "number_max": 899,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 29,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 236,
+      "subject": "IART",
+      "number_min": 500,
+      "number_max": 899,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 30,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 279,
+      "subject": "BIO",
+      "number_min": 300,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 31,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 306,
+      "subject": "BIO",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 32,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 307,
+      "subject": "BIO",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 33,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 368,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 34,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 369,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 35,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 420,
+      "subject": null,
+      "number_min": 600,
+      "number_max": 799,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 36,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 444,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 37,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 523,
+      "subject": "CHEM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 38,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 554,
+      "subject": "CHEM",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 39,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 556,
+      "subject": "COB",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 40,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 578,
+      "subject": "CHEM",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 41,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 578,
+      "subject": "PHYS",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 42,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 578,
+      "subject": "MATH",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 43,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 658,
+      "subject": "BIO",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 44,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 659,
+      "subject": "PHYS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 45,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 659,
+      "subject": "CHEM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 46,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 670,
+      "subject": "BIO",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 47,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 671,
+      "subject": "PHYS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 48,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 671,
+      "subject": "CHEM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 49,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 674,
+      "subject": "BIO",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 50,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 675,
+      "subject": "MATH",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 51,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 676,
+      "subject": "SOCI",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 52,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 739,
+      "subject": "SCOM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 53,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 755,
+      "subject": "SCOM",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 54,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 799,
+      "subject": "SCOM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 55,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 815,
+      "subject": "SCOM",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 56,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 846,
+      "subject": "CIS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 57,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 866,
+      "subject": "CIS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 58,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 871,
+      "subject": "CIS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 59,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 878,
+      "subject": "CS",
+      "number_min": 101,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 60,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 878,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1059,
+      "course_code": "CS 280",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 61,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 885,
+      "subject": "CS",
+      "number_min": 300,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 62,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 922,
+      "subject": "DANC",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 63,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 923,
+      "subject": "DANC",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 64,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 987,
+      "subject": "ECON",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 65,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 995,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 66,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1004,
+      "subject": "ECON",
+      "number_min": 200,
+      "number_max": 399,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 67,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1005,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 68,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1022,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 69,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1022,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1279,
+      "course_code": "ECON 490",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 70,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1022,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1280,
+      "course_code": "ECON 499A",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 71,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1026,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 72,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1030,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 73,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1035,
+      "subject": "ECON",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 74,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1039,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 75,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1051,
+      "subject": "ECON",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 76,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1056,
+      "subject": "ECON",
+      "number_min": 200,
+      "number_max": 399,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 77,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1057,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 78,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1074,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 79,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1074,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1279,
+      "course_code": "ECON 490",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 80,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1074,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1280,
+      "course_code": "ECON 499A",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 81,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1078,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 82,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1082,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 83,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1087,
+      "subject": "ECON",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 84,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1091,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 85,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1098,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 86,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1107,
+      "subject": "ECON",
+      "number_min": 200,
+      "number_max": 399,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 87,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1108,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 88,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1125,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 89,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1125,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1279,
+      "course_code": "ECON 490",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 90,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1125,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1280,
+      "course_code": "ECON 499A",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 91,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1129,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 92,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1133,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 93,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1138,
+      "subject": "ECON",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 94,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1142,
+      "subject": "ECON",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 95,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1246,
+      "subject": "ENGR",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 96,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1246,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1368,
+      "course_code": "ENGR 301",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 97,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1246,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1386,
+      "course_code": "ENGR 401",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 98,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1246,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1406,
+      "course_code": "ENGR 490",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 99,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1246,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1407,
+      "course_code": "ENGR 496",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 100,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1246,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1408,
+      "course_code": "ENGR 497",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 101,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1246,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1409,
+      "course_code": "ENGR 498",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 102,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1246,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1410,
+      "course_code": "ENGR 499A",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 103,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1246,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1411,
+      "course_code": "ENGR 499B",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 104,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1246,
+      "subject": null,
+      "number_min": null,
+      "number_max": null,
+      "course": 1412,
+      "course_code": "ENGR 499C",
+      "exclude": true
+    }
+  },
+  {
+    "pk": 105,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1259,
+      "subject": "ENG",
+      "number_min": 300,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 106,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1284,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 107,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1285,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 108,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1305,
+      "subject": "ENG",
+      "number_min": 500,
+      "number_max": 699,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 109,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1413,
+      "subject": "MUAP",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 110,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1413,
+      "subject": "MUED",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 111,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1413,
+      "subject": "MUI",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 112,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1413,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 113,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1416,
+      "subject": "GEOG",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 114,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1424,
+      "subject": "GEOG",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 115,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1438,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 116,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1454,
+      "subject": "GEOG",
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 117,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1468,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 118,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1490,
+      "subject": "GEOL",
+      "number_min": 200,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 119,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1549,
+      "subject": "BIO",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 120,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1549,
+      "subject": "CHEM",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 121,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1549,
+      "subject": "GEOL",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 122,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1549,
+      "subject": "ENVT",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 123,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1573,
+      "subject": "BIO",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 124,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1573,
+      "subject": "CHEM",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 125,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1573,
+      "subject": "GEOL",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 126,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1573,
+      "subject": "ENVT",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 127,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1597,
+      "subject": "REL",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 128,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1669,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 129,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1687,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 130,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1700,
+      "subject": null,
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 131,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1702,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 132,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1716,
+      "subject": null,
+      "number_min": 400,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 133,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1718,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 134,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1721,
+      "subject": "HIST",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 135,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1876,
+      "subject": "ISAT",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 136,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 1974,
+      "subject": null,
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 137,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2083,
+      "subject": "IB",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 138,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2226,
+      "subject": "MKTG",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 139,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2249,
+      "subject": "MATH",
+      "number_min": 237,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 140,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2260,
+      "subject": "MATH",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 141,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2264,
+      "subject": "MATH",
+      "number_min": 310,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 142,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2267,
+      "subject": "MATH",
+      "number_min": 310,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 143,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2282,
+      "subject": "MATH",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 144,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2286,
+      "subject": "MATH",
+      "number_min": 310,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 145,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2289,
+      "subject": "MATH",
+      "number_min": 310,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 146,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2303,
+      "subject": "PHIL",
+      "number_min": 100,
+      "number_max": 399,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 147,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2340,
+      "subject": "SMAD",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 148,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2378,
+      "subject": "SPAN",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 149,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2434,
+      "subject": "ARAB",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 150,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2434,
+      "subject": "LING",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 151,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2434,
+      "subject": "WLC",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 152,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2438,
+      "subject": "CHIN",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 153,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2438,
+      "subject": "LING",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 154,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2438,
+      "subject": "WLC",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 155,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2442,
+      "subject": "FR",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 156,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2442,
+      "subject": "LING",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 157,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2442,
+      "subject": "WLC",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 158,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2446,
+      "subject": "GER",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 159,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2446,
+      "subject": "LING",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 160,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2446,
+      "subject": "WLC",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 161,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2450,
+      "subject": "ITAL",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 162,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2450,
+      "subject": "LING",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 163,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2450,
+      "subject": "WLC",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 164,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2458,
+      "subject": "SPAN",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 165,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2552,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 166,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2622,
+      "subject": "MUAP",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 167,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2622,
+      "subject": "MUI",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 168,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2622,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 169,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2622,
+      "subject": "MUED",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 170,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2672,
+      "subject": "ARTS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 171,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2672,
+      "subject": "IART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 172,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2672,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 173,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2700,
+      "subject": "MUI",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 174,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2701,
+      "subject": "ARTS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 175,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2701,
+      "subject": "IART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 176,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2701,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 177,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2705,
+      "subject": "MUAP",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 178,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2707,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 179,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2708,
+      "subject": "ARTS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 180,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2708,
+      "subject": "IART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 181,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2708,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 182,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2714,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 183,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2715,
+      "subject": "ARTS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 184,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2715,
+      "subject": "IART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 185,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2715,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 186,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2725,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 187,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2726,
+      "subject": "ARTS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 188,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2726,
+      "subject": "IART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 189,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2726,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 190,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2737,
+      "subject": "ARTS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 191,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2737,
+      "subject": "IART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 192,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2737,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 193,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2746,
+      "subject": "ARTS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 194,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2746,
+      "subject": "IART",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 195,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2746,
+      "subject": "DANC",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 196,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2753,
+      "subject": "MUAP",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 197,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2762,
+      "subject": null,
+      "number_min": 500,
+      "number_max": 799,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 198,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2772,
+      "subject": "MUAP",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 199,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2774,
+      "subject": "MUED",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 200,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2777,
+      "subject": "MUAP",
+      "number_min": 500,
+      "number_max": 599,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 201,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2778,
+      "subject": "MUAP",
+      "number_min": 600,
+      "number_max": 699,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 202,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2779,
+      "subject": "MUS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 203,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2780,
+      "subject": null,
+      "number_min": 500,
+      "number_max": 799,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 204,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2794,
+      "subject": "NSG",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 205,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2796,
+      "subject": "NSG",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 206,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2846,
+      "subject": "REL",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 207,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2865,
+      "subject": "PHIL",
+      "number_min": 300,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 208,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2869,
+      "subject": "PHIL",
+      "number_min": 300,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 209,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2876,
+      "subject": "PHIL",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 210,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2903,
+      "subject": "PHYS",
+      "number_min": 300,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 211,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 2934,
+      "subject": "PHYS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 212,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3029,
+      "subject": "GEOL",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 213,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3029,
+      "subject": "PHYS",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 214,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3037,
+      "subject": "PHYS",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 215,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3096,
+      "subject": "ENG",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 216,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3096,
+      "subject": "HUM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 217,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3107,
+      "subject": "ENG",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 218,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3107,
+      "subject": "HUM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 219,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3111,
+      "subject": "SOCI",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 220,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3120,
+      "subject": "ENG",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 221,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3120,
+      "subject": "HUM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 222,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3144,
+      "subject": "SOCI",
+      "number_min": 200,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 223,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3144,
+      "subject": "ANTH",
+      "number_min": 200,
+      "number_max": 999,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 224,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3170,
+      "subject": "ENG",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 225,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3170,
+      "subject": "HUM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 226,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3194,
+      "subject": "ENG",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 227,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3194,
+      "subject": "HUM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 228,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3240,
+      "subject": "MATH",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 229,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3272,
+      "subject": "ENG",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 230,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3272,
+      "subject": "HUM",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 231,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3322,
+      "subject": "PSYC",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 232,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3349,
+      "subject": "PSYC",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 233,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3412,
+      "subject": "ECON",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 234,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3536,
+      "subject": "SOCI",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 235,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3577,
+      "subject": "SPAN",
+      "number_min": 300,
+      "number_max": 499,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  },
+  {
+    "pk": 236,
+    "model": "catalog.coursefilter",
+    "fields": {
+      "group": 3765,
+      "subject": "WRTC",
+      "number_min": null,
+      "number_max": null,
+      "course": null,
+      "course_code": null,
+      "exclude": false
+    }
+  }
+]
