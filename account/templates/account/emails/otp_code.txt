@@ -1,0 +1,11 @@
+Duke AI Planner
+
+Verify your email address. For your added security, use this code to verify your email address. This code will expire after {{ expiry_minutes }} minutes.
+
+{{ code }}
+
+Thanks,
+
+The Developer
+
+You are receiving this email because someone tried to sign in to Duke AI Planner with this address. If this wasn't you, you can safely ignore this email.

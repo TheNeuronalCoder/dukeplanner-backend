@@ -26,5 +26,5 @@ urlpatterns = [
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
     path('auth/logout/', TokenBlacklistView.as_view(), name='token-blacklist'),
     path('catalog/', include('catalog.urls')),
-    # path('account/', include('account.urls')),
+    path('account/', include('account.urls')),
 ]
