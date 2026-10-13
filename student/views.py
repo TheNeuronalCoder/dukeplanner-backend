@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 from django.db import transaction
 from django.db.models import Q, Sum
@@ -156,11 +156,58 @@ def requirements(request):
     )
 
 
+def _issue_json(i):
+    return {'code': i.code, 'message': i.message, 'severity': i.severity.value}
+
+
 def _issues_json(account):
-    return [
-        {'code': i.code, 'message': i.message, 'severity': i.severity.value}
-        for i in validate_account(account)
-    ]
+    return [_issue_json(i) for i in validate_account(account)]
+
+
+class _Invalidates(Exception):
+    """Raised inside a change's transaction to roll it back."""
+
+    def __init__(self, issues):
+        self.issues = issues
+
+
+def _new_errors(account, before):
+    """The account's ERROR-level issues that aren't in `before` (a Counter of
+    (code, message)), so an account still being set up isn't blocked by errors
+    it already had, only by ones the change introduces.
+    """
+    remaining = before.copy()
+    new = []
+    for i in errors(validate_account(account)):
+        key = (i.code, i.message)
+        if remaining[key]:
+            remaining[key] -= 1
+        else:
+            new.append(i)
+    return new
+
+
+def _guarded(account, change):
+    """Runs `change()` in a transaction and returns (its result, None), or rolls
+    it back and returns (None, a 409 response) if it would make the account
+    invalid, i.e. introduce new ERROR-level validation issues.
+    """
+    try:
+        with transaction.atomic():
+            before = Counter((i.code, i.message) for i in errors(validate_account(account)))
+            result = change()
+            new = _new_errors(account, before)
+            if new:
+                raise _Invalidates(new)
+    except _Invalidates as e:
+        return None, JsonResponse(
+            {
+                'error': 'This change would make the account invalid.',
+                'issues': [_issue_json(i) for i in e.issues],
+            },
+            status=status.HTTP_409_CONFLICT,
+        )
+    return result, None
 
 
 def _added(account, objs, noun):
@@ -177,7 +224,9 @@ def _added(account, objs, noun):
 def _delete_owned(request, queryset, noun, field='pk'):
     """Deletes every row of `queryset` (already limited to the caller's account)
     whose `field` is in the request body, a non-empty JSON list. If any value
-    isn't found, nothing is deleted and they're returned with a 404.
+    isn't found, nothing is deleted and they're returned with a 404. If the
+    deletion would make the account invalid, nothing is deleted and the new
+    errors are returned with a 409.
     """
     pks = request.data
     if not isinstance(pks, list) or not pks or not all(isinstance(pk, (int, str)) for pk in pks):
@@ -186,16 +235,18 @@ def _delete_owned(request, queryset, noun, field='pk'):
         )
     pks = list(dict.fromkeys(pks))
 
-    with transaction.atomic():
-        targets = queryset.filter(**{f'{field}__in': pks})
-        found = {str(pk) for pk in targets.values_list(field, flat=True)}
-        missing = [pk for pk in pks if str(pk) not in found]
-        if missing:
-            return JsonResponse(
-                {'error': f'Some {noun} were not found.', 'missing': missing},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        targets.delete()
+    targets = queryset.filter(**{f'{field}__in': pks})
+    found = {str(pk) for pk in targets.values_list(field, flat=True)}
+    missing = [pk for pk in pks if str(pk) not in found]
+    if missing:
+        return JsonResponse(
+            {'error': f'Some {noun} were not found.', 'missing': missing},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    _, rejected = _guarded(request.user, targets.delete)
+    if rejected:
+        return rejected
 
     return JsonResponse(
         {'detail': f'{len(pks)} {noun} deleted.', 'issues': _issues_json(request.user)}
@@ -209,14 +260,16 @@ def add_courses(request):
     """POST /student/courses/add/
 
     Adds classes to the signed-in account. `semester` is the pk of one of the
-    account's semesters; omit it or pass null to leave the class unassigned.
+    account's semesters. Omitting it or passing null leaves the class unassigned,
+    which validation flags as an error, so it's rejected (see below).
     `credits` defaults to the course's credits and must be within its range, and
     `credits_earned` (false if failed) defaults to true. A
     course can't be listed twice in the same semester. Nothing is saved if any
     item is invalid.
 
     Returns the new class ids (in request order) and the account's validation
-    issues, which are reported but don't block the change.
+    issues. Returns a 409 with the new errors, saving nothing, if the classes
+    would make the account invalid (see account.validation).
 
     Sample request body:
     [
@@ -229,17 +282,18 @@ def add_courses(request):
     serializer.is_valid(raise_exception=True)
 
     account = request.user
-    with transaction.atomic():
-        classes = Class.objects.bulk_create(
-            Class(
-                account=account,
-                course=i['course'],
-                semester=i['semester'],
-                credits=i['credits'],
-                credits_earned=i['credits_earned'],
-            )
-            for i in serializer.validated_data
+    classes, rejected = _guarded(account, lambda: Class.objects.bulk_create(
+        Class(
+            account=account,
+            course=i['course'],
+            semester=i['semester'],
+            credits=i['credits'],
+            credits_earned=i['credits_earned'],
         )
+        for i in serializer.validated_data
+    ))
+    if rejected:
+        return rejected
     return _added(account, classes, 'courses')
 
 
@@ -253,7 +307,9 @@ def add_programs(request):
     track pk that must belong to that program. A program the account already
     has can't be added again. Nothing is saved if any item is invalid.
 
-    Returns the new program slugs and the account's validation issues.
+    Returns the new program slugs and the account's validation issues. Returns
+    a 409 with the new errors, saving nothing, if the programs would make the
+    account invalid (e.g. a minor in the same area as one of its majors).
 
     Sample request body:
     [
@@ -265,11 +321,12 @@ def add_programs(request):
     serializer.is_valid(raise_exception=True)
 
     account = request.user
-    with transaction.atomic():
-        Curriculum.objects.bulk_create(
-            Curriculum(account=account, program=i['program'], track=i['track'])
-            for i in serializer.validated_data
-        )
+    _, rejected = _guarded(account, lambda: Curriculum.objects.bulk_create(
+        Curriculum(account=account, program=i['program'], track=i['track'])
+        for i in serializer.validated_data
+    ))
+    if rejected:
+        return rejected
     programs = [i['program'] for i in serializer.validated_data]
     return _added(account, programs, 'programs')
 
@@ -284,7 +341,8 @@ def add_semesters(request):
     has can't be added again. Nothing is saved if any item is invalid.
 
     Returns the new semester ids (in request order) and the account's
-    validation issues.
+    validation issues. Returns a 409 with the new errors, saving nothing, if the
+    semesters would make the account invalid (e.g. a year out of range).
 
     Sample request body:
     [
@@ -296,15 +354,16 @@ def add_semesters(request):
     serializer.is_valid(raise_exception=True)
 
     account = request.user
-    with transaction.atomic():
-        semesters = Semester.objects.bulk_create(
-            Semester(
-                account=account,
-                term=Semester.Term[i['term'].upper()],
-                year=i['year'],
-            )
-            for i in serializer.validated_data
+    semesters, rejected = _guarded(account, lambda: Semester.objects.bulk_create(
+        Semester(
+            account=account,
+            term=Semester.Term[i['term'].upper()],
+            year=i['year'],
         )
+        for i in serializer.validated_data
+    ))
+    if rejected:
+        return rejected
     return _added(account, semesters, 'semesters')
 
 
@@ -315,7 +374,8 @@ def delete_courses(request):
     """DELETE /student/courses/delete/ [1, 2, 3]
 
     Deletes the signed-in account's classes with these ids (the `id` of each
-    course in GET /student/courses/).
+    course in GET /student/courses/). Returns a 409, deleting nothing, if that
+    would make the account invalid.
     """
     return _delete_owned(request, request.user.classes.all(), 'courses')
 
@@ -326,7 +386,9 @@ def delete_courses(request):
 def delete_programs(request):
     """DELETE /student/programs/delete/ ["computer-science-bs"]
 
-    Removes these programs (by slug) from the signed-in account.
+    Removes these programs (by slug) from the signed-in account. Returns a 409,
+    removing nothing, if that would make the account invalid (e.g. removing its
+    only degree while it still has a minor).
     """
     return _delete_owned(request, request.user.programs.all(), 'programs', field='program_id')
 
@@ -338,6 +400,7 @@ def delete_semesters(request):
     """DELETE /student/semesters/delete/ [1, 2]
 
     Deletes the signed-in account's semesters with these ids, along with the
-    classes placed in them.
+    classes placed in them. Returns a 409, deleting nothing, if that would make
+    the account invalid (e.g. deleting its only semester).
     """
     return _delete_owned(request, request.user.semesters.all(), 'semesters')
