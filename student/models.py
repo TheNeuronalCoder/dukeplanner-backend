@@ -27,6 +27,10 @@ class Semester(models.Model):
 class Class(models.Model):
     account = models.ForeignKey('account.Account', on_delete=models.CASCADE, related_name='classes')
     course = models.ForeignKey('catalog.Course', on_delete=models.PROTECT, related_name='classes')
+    # Null until the class is placed in a semester (validation flags it as an error).
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, null=True, blank=True, related_name='classes'
+    )
 
     class Meta:
         verbose_name_plural = 'classes'

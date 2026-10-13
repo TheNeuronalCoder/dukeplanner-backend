@@ -62,7 +62,7 @@ class ProgramKind(str, Enum):
 # Configuration (loaded from YAML)
 # --------------------------------------------------------------------------- #
 
-DEFAULT_CONFIG_PATH = Path(__file__).with_name('data/valid_account.yaml')
+DEFAULT_CONFIG_PATH = Path(__file__).parent / 'data' / 'valid_account.yaml'
 
 
 @dataclass(frozen=True)

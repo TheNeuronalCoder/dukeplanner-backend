@@ -2,17 +2,23 @@ import re
 import secrets
 from datetime import timedelta
 
+from django.db import transaction
 from django.db.models import F
 from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.crypto import constant_time_compare, salted_hmac
 from rest_framework import status
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, authentication_classes, parser_classes, permission_classes
+from rest_framework.parsers import JSONParser
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from student.models import Class, Curriculum, Semester
 
 from .emails import OTP_EXPIRY_MINUTES, send_otp_email
 from .models import Account, VerificationCode
+from .serializers import SetupSerializer
+from .validation import errors, validate_account
 
 CODE_LENGTH = 6
 MAX_ATTEMPTS = 5
@@ -111,3 +117,51 @@ def verify_code(request):
         'access': str(refresh.access_token),
         'refresh': str(refresh)
     })
+
+
+def _issue_json(issue):
+    return {'code': issue.code, 'message': issue.message, 'severity': issue.severity.value}
+
+
+@api_view(['POST'])
+@parser_classes([JSONParser])
+@permission_classes([IsAuthenticated])
+def setup(request):
+    """POST /account/setup/ (see SetupSerializer for the body)
+
+    Replaces the signed-in account's names, programs, semesters and classes, then
+    runs account.validation. On ERROR-level issues nothing is saved and they are
+    returned with a 400; otherwise any warnings/info come back with the success.
+    """
+    serializer = SetupSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    data = serializer.validated_data
+
+    account = request.user
+    with transaction.atomic():
+        account.first_name = data['first_name']
+        account.last_name = data['last_name']
+        account.save(update_fields=['first_name', 'last_name'])
+
+        account.programs.all().delete()
+        account.semesters.all().delete()
+        account.classes.all().delete()
+
+        Curriculum.objects.bulk_create(Curriculum(account=account, program=p) for p in data['programs'])
+        for s in data['semesters']:
+            semester = Semester.objects.create(
+                account=account, term=Semester.Term[s['term'].upper()], year=s['year']
+            )
+            Class.objects.bulk_create(
+                Class(account=account, semester=semester, course=c) for c in s['courses']
+            )
+
+        issues = validate_account(account)
+        if errors(issues):
+            transaction.set_rollback(True)
+            return JsonResponse(
+                {'error': 'Account setup is invalid.', 'issues': [_issue_json(i) for i in errors(issues)]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    return JsonResponse({'detail': 'Account set up.', 'issues': [_issue_json(i) for i in issues]})

@@ -3,7 +3,10 @@ from datetime import timedelta
 
 from django.core import mail
 from django.test import TestCase
+from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
+
+from catalog.models import Course, Program, Subject
 
 from .emails import OTP_EXPIRY_MINUTES, send_otp_email
 from .models import Account, VerificationCode
@@ -28,11 +31,11 @@ class OtpEmailTests(TestCase):
 
 class VerificationCodeTests(TestCase):
     def request_code(self, eid='abc'):
-        return self.client.post('/account/request-code/', {'eid': eid}, content_type='application/json')
+        return self.client.post('/auth/request-code/', {'eid': eid}, content_type='application/json')
 
     def verify_code(self, code, eid='abc'):
         return self.client.post(
-            '/account/verify-code/', {'eid': eid, 'code': code}, content_type='application/json'
+            '/auth/verify-code/', {'eid': eid, 'code': code}, content_type='application/json'
         )
 
     def sent_code(self):
@@ -63,7 +66,6 @@ class VerificationCodeTests(TestCase):
         response = self.verify_code(self.sent_code())
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.json()['created'])
         account = Account.objects.get(username='abc')
         self.assertEqual(str(AccessToken(response.json()['access'])['user_id']), str(account.pk))
         self.assertFalse(VerificationCode.objects.exists())
@@ -74,7 +76,8 @@ class VerificationCodeTests(TestCase):
         response = self.verify_code(self.sent_code())
 
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(response.json()['created'])
+        self.assertEqual(Account.objects.count(), 1)
+        self.assertEqual(Account.objects.get().first_name, 'Jane')
 
     def test_code_is_single_use(self):
         self.request_code()
@@ -114,3 +117,109 @@ class VerificationCodeTests(TestCase):
         self.assertEqual(self.verify_code('12345').status_code, 400)
         self.assertEqual(self.verify_code(123456).status_code, 400)
         self.assertEqual(self.verify_code('123456', eid='abc1').status_code, 400)
+
+
+class SetupTests(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        for slug, type_ in [('computer-science-bs', 'B.S.'), ('mathematics-minor', 'Minor')]:
+            Program.objects.create(
+                slug=slug, name=slug, level='undergraduate', type=type_,
+                url='https://catalog.jmu.edu/', requirements_pdf_url='https://catalog.jmu.edu/',
+            )
+        for prefix, number in [('CS', '149'), ('CS', '159'), ('MATH', '235')]:
+            subject, _ = Subject.objects.get_or_create(code=prefix, defaults={'name': prefix})
+            Course.objects.create(
+                prefix=subject, number=number, title=f'{prefix} {number}',
+                credits=3, min_credits=3, max_credits=3,
+            )
+
+    def setUp(self):
+        self.account = Account.objects.create_user('abc', 'a', 'bc')
+        self.client.force_authenticate(self.account)
+
+    def body(self, **overrides):
+        return {
+            'first_name': 'Jane',
+            'last_name': 'Doe',
+            'programs': ['computer-science-bs', 'mathematics-minor'],
+            'semesters': [
+                {'term': 'fall', 'year': 2025, 'courses': ['CS 149', 'MATH 235']},
+                {'term': 'spring', 'year': 2026, 'courses': ['cs 159']},
+            ],
+            **overrides,
+        }
+
+    def setup(self, body):
+        return self.client.post('/account/setup/', body, format='json')
+
+    def test_setup_saves_account(self):
+        response = self.setup(self.body())
+
+        self.assertEqual(response.status_code, 200, response.content)
+        self.account.refresh_from_db()
+        self.assertEqual((self.account.first_name, self.account.last_name), ('Jane', 'Doe'))
+        self.assertCountEqual(
+            self.account.programs.values_list('program_id', flat=True),
+            ['computer-science-bs', 'mathematics-minor'],
+        )
+        fall = self.account.semesters.get(year=2025)
+        self.assertCountEqual([c.course.code for c in fall.classes.all()], ['CS 149', 'MATH 235'])
+        self.assertEqual(self.account.classes.count(), 3)
+
+    def test_setup_replaces_previous_setup(self):
+        self.setup(self.body())
+        response = self.setup(self.body(
+            programs=['computer-science-bs'],
+            semesters=[{'term': 'summer', 'year': 2026, 'courses': ['CS 149']}],
+        ))
+
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertEqual(self.account.programs.count(), 1)
+        self.assertEqual(self.account.semesters.get().get_term_display(), 'Summer')
+        self.assertEqual(self.account.classes.count(), 1)
+
+    def test_invalid_account_is_rolled_back(self):
+        self.setup(self.body())
+        response = self.setup(self.body(first_name='John', programs=['mathematics-minor']))
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('no_degree', [i['code'] for i in response.json()['issues']])
+        self.account.refresh_from_db()
+        self.assertEqual(self.account.first_name, 'Jane')
+        self.assertEqual(self.account.programs.count(), 2)
+        self.assertEqual(self.account.classes.count(), 3)
+
+    def test_no_semesters_is_invalid(self):
+        response = self.setup(self.body(semesters=[]))
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('no_semester', [i['code'] for i in response.json()['issues']])
+        self.assertFalse(self.account.programs.exists())
+
+    def test_rejects_malformed_input(self):
+        response = self.setup(self.body(
+            programs=['nope'],
+            semesters=[{'term': 'autumn', 'year': 'x', 'courses': ['ZZ 999']}],
+        ))
+
+        self.assertEqual(response.status_code, 400)
+        errors = response.json()
+        self.assertIn('programs', errors)
+        self.assertEqual(set(errors['semesters'][0]), {'term', 'year', 'courses'})
+
+    def test_rejects_duplicates(self):
+        dup_programs = self.body(programs=['computer-science-bs', 'computer-science-bs'])
+        dup_semesters = self.body(semesters=[
+            {'term': 'fall', 'year': 2025, 'courses': []},
+            {'term': 'fall', 'year': 2025, 'courses': []},
+        ])
+
+        self.assertEqual(self.setup(dup_programs).status_code, 400)
+        self.assertEqual(self.setup(dup_semesters).status_code, 400)
+        self.assertFalse(self.account.semesters.exists())
+
+    def test_requires_authentication(self):
+        self.client.force_authenticate(None)
+
+        self.assertEqual(self.setup(self.body()).status_code, 401)
