@@ -10,4 +10,5 @@ urlpatterns = [
     path('auth/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
     path('auth/logout/', TokenBlacklistView.as_view(), name='token-blacklist'),
     path('account/setup/', views.setup, name='setup'),
+    path('account/delete/', views.delete_account, name='delete-account'),
 ]

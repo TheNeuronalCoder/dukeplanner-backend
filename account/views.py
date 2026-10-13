@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, parser_classes, permission_classes
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from student.models import Class, Curriculum, Semester
@@ -184,3 +185,25 @@ def setup(request):
             )
 
     return JsonResponse({'detail': 'Account set up.', 'issues': [_issue_json(i) for i in issues]})
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_account(request):
+    """DELETE /account/delete/
+
+    Permanently deletes the signed-in account along with its programs, semesters
+    and classes. Only the caller's own account can be deleted; the target is never
+    taken from the request body. Outstanding refresh tokens are blacklisted first
+    so they can't be used after the account is gone.
+    """
+    account = request.user
+    with transaction.atomic():
+        # The blacklist app nulls OutstandingToken.user on delete, so revoke while
+        # the tokens can still be found by user.
+        for token in OutstandingToken.objects.filter(user=account):
+            BlacklistedToken.objects.get_or_create(token=token)
+        VerificationCode.objects.filter(username=account.username).delete()
+        account.delete()
+
+    return JsonResponse({'detail': 'Account deleted.'})
