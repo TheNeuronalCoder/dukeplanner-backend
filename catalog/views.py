@@ -1,15 +1,12 @@
 import re
-from collections import defaultdict
 
 from django.db.models import Case, IntegerField, Q, TextField, Value, When
 from django.db.models.functions import Cast
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
-from .models import Course, Program, Track
-from .utils import gened as gen_ed
-from .utils.courses import course_json, lookup_courses
-from .utils.requirements import evaluate_program
+from .models import Course, Program
+from .utils.courses import course_json
 
 SEARCH_DEFAULT_LIMIT = 20
 SEARCH_MAX_LIMIT = 100
@@ -95,8 +92,7 @@ def search_programs(request):
 
     Every word of `q` must appear in the program's name or keywords. Results are
     ranked name-prefix, then name, then keyword-only matches, and capped at
-    `limit` (default 20, max 100). Each result lists its tracks, whose ids can be
-    passed to /requirements.
+    `limit` (default 20, max 100). Each result lists its tracks.
     """
     query, limit = _parse_search(request)
     if query is None:
@@ -147,92 +143,3 @@ def search_programs(request):
         }
     )
 
-
-@require_GET
-def requirements(request):
-    """GET /requirements?program=<slug>[,<slug>...]&courses=COB 191,COB 202[&track=<id>[,<id>...]]
-
-    `program`, `courses` and `track` may be comma-separated and/or repeated, so a
-    double major or a major with minors is checked in one request. Each track id
-    applies to the program it belongs to (at most one per program); if a program
-    has a track, only requirements common to it or specific to that track are
-    returned.
-
-    `programs` holds one entry per program, in the order given, each with its
-    requirements bucketed by status. `degree_requirements` holds the B.A./B.S.
-    requirements (philosophy, foreign language, quantitative, scientific literacy)
-    the program's placeholders name. University electives are the taken courses no
-    other requirement of that program counts. Placeholders like "Major
-    requirements" in "Degree Requirements" take the combined status of the
-    program's other sections.
-
-    `general_education` holds the cluster/area breakdown when any program requires
-    General Education; Gen Ed placeholder groups are checked against it.
-    `shared_courses` maps each course counted by more than one program's own
-    requirements to those programs' slugs, for checking overlap limits.
-    """
-    slugs = _parse_list(request, 'program')
-    if not slugs:
-        return JsonResponse({'error': "Missing 'program' parameter."}, status=400)
-    programs = Program.objects.in_bulk(slugs)
-    missing = [s for s in slugs if s not in programs]
-    if missing:
-        return JsonResponse(
-            {'error': f"Unknown program(s): {', '.join(missing)}."}, status=404
-        )
-
-    track_ids = _parse_list(request, 'track')
-    bad = [t for t in track_ids if not t.isdigit()]
-    tracks = Track.objects.filter(
-        pk__in=[t for t in track_ids if t.isdigit()], program__in=slugs
-    ).in_bulk()
-    bad += [t for t in track_ids if t.isdigit() and int(t) not in tracks]
-    if bad:
-        return JsonResponse(
-            {'error': f"Unknown track(s) for the given programs: {', '.join(bad)}."},
-            status=404,
-        )
-    track_by_program = {}
-    for track in tracks.values():
-        if track.program_id in track_by_program:
-            return JsonResponse(
-                {'error': f"Multiple tracks given for program '{track.program_id}'."},
-                status=400,
-            )
-        track_by_program[track.program_id] = str(track.pk)
-
-    taken, unknown = lookup_courses(_parse_list(request, 'courses'))
-
-    gened = None
-
-    def get_gened():
-        nonlocal gened
-        if gened is None:
-            gened = gen_ed.evaluate(taken)
-        return gened
-
-    results = []
-    used_by = defaultdict(list)
-    requires_gened = False
-    for slug in slugs:
-        result, codes, program_gened = evaluate_program(
-            programs[slug], track_by_program.get(slug), taken, get_gened
-        )
-        results.append(result)
-        requires_gened = requires_gened or program_gened
-        for code in codes:
-            used_by[code].append(slug)
-
-    return JsonResponse(
-        {
-            'programs': results,
-            'courses': [course_json(c) for c in taken.values()],
-            'unknown_courses': unknown,
-            # Only present if some program requires General Education.
-            'general_education': gened[0] if requires_gened else None,
-            'shared_courses': {
-                code: slugs_ for code, slugs_ in sorted(used_by.items())
-                if len(slugs_) > 1
-            },
-        }
-    )

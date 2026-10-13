@@ -132,6 +132,25 @@ def setup(request):
     Replaces the signed-in account's names, programs, semesters and classes, then
     runs account.validation. On ERROR-level issues nothing is saved and they are
     returned with a 400; otherwise any warnings/info come back with the success.
+
+    Sample request body:
+    {
+        "first_name": "Menelik",
+        "last_name": "Eyasu",
+        "programs": ["computer-science-bs", "mathematics-minor"],
+        "semesters": [
+            {
+                "term": "fall",
+                "year": 2025,
+                "courses": ["CS 149", "MATH 235", "WRTC 103"]
+            },
+            {
+                "term": "spring",
+                "year": 2026,
+                "courses": ["CS 159", "CS 227", "MATH 236"]
+            }
+        ]
+    }
     """
     serializer = SetupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
