@@ -7,6 +7,15 @@ def course_credits(course):
     return course.credits if course.credits is not None else course.min_credits
 
 
+def credits_range_error(course, credits):
+    """An error message if `credits` is outside the course's credit range, else None."""
+    if course.min_credits <= credits <= course.max_credits:
+        return None
+    if course.min_credits == course.max_credits:
+        return f'{course.code} is {course.min_credits} credits.'
+    return f'{course.code} must be {course.min_credits}-{course.max_credits} credits.'
+
+
 def course_number(course):
     """Leading numeric part of a course number, e.g. "499A" -> 499."""
     match = re.match(r'\d+', course.number)
@@ -18,7 +27,13 @@ def normalize_code(code):
 
 
 def course_json(course):
-    return {'code': course.code, 'title': course.title, 'credits': course_credits(course)}
+    return {
+        'code': course.code,
+        'title': course.title,
+        'credits': course_credits(course),
+        'min_credits': course.min_credits,
+        'max_credits': course.max_credits,
+    }
 
 
 def lookup_courses(codes):

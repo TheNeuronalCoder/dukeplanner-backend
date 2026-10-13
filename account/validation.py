@@ -370,13 +370,6 @@ def check_semesters(semesters, config: Config, today: date | None = None) -> lis
                 f'{s}: year must be between {config.min_semester_year} and {max_year}.',
                 obj=s,
             ))
-        if s.credits_earned > s.credits_attempted:
-            issues.append(Issue(
-                'earned_exceeds_attempted',
-                f"{s}: credits earned ({s.credits_earned}) can't exceed credits "
-                f'attempted ({s.credits_attempted}).',
-                obj=s,
-            ))
     return issues
 
 
@@ -400,6 +393,13 @@ def check_classes(account_id, classes, config: Config) -> list[Issue]:
             issues.append(Issue(
                 'class_semester_other_account',
                 f"{c.course.code} is assigned to a semester that isn't yours.",
+                obj=c,
+            ))
+        if not (c.course.min_credits <= c.credits <= c.course.max_credits):
+            issues.append(Issue(
+                'class_credits_out_of_range',
+                f'{c.course.code} in {c.semester} has {c.credits} credits, outside its '
+                f'{c.course.min_credits}-{c.course.max_credits} credit range.',
                 obj=c,
             ))
         key = (c.semester_id, c.course_id)

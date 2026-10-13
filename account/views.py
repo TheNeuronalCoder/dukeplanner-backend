@@ -143,7 +143,11 @@ def setup(request):
             {
                 "term": "fall",
                 "year": 2025,
-                "courses": ["CS 149", "MATH 235", "WRTC 103"]
+                "courses": [
+                    {"course": "CS 149", "credits": 3, "credits_earned": true},
+                    {"course": "MATH 235", "credits": 4, "credits_earned": false},
+                    {"course": "IND 499", "credits": 2}
+                ]
             },
             {
                 "term": "spring",
@@ -152,6 +156,11 @@ def setup(request):
             }
         ]
     }
+
+    Each course is an object with `course`, optional `credits` (defaults to the
+    course's credits; must be within its min/max range) and optional
+    `credits_earned` (false if failed; defaults to true). A bare course code is
+    also accepted, meaning the defaults.
     """
     serializer = SetupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
@@ -173,7 +182,14 @@ def setup(request):
                 account=account, term=Semester.Term[s['term'].upper()], year=s['year']
             )
             Class.objects.bulk_create(
-                Class(account=account, semester=semester, course=c) for c in s['courses']
+                Class(
+                    account=account,
+                    semester=semester,
+                    course=c['course'],
+                    credits=c['credits'],
+                    credits_earned=c['credits_earned'],
+                )
+                for c in s['courses']
             )
 
         issues = validate_account(account)

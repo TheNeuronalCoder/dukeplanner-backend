@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from account.serializers import CourseField
+from account.serializers import ClassSerializer
 from catalog.models import Program, Track
 
 from .models import Semester
@@ -13,8 +13,7 @@ class OwnedSemesterField(serializers.PrimaryKeyRelatedField):
         return Semester.objects.filter(account=self.context['request'].user)
 
 
-class AddCourseSerializer(serializers.Serializer):
-    course = CourseField()
+class AddCourseSerializer(ClassSerializer):
     # Omit or null to leave the class unassigned.
     semester = OwnedSemesterField(required=False, allow_null=True, default=None)
 
@@ -37,8 +36,6 @@ class AddProgramSerializer(serializers.Serializer):
 class AddSemesterSerializer(serializers.Serializer):
     term = serializers.ChoiceField(choices=[t.lower() for t in Semester.Term.names])
     year = serializers.IntegerField(min_value=0)
-    credits_attempted = serializers.IntegerField(min_value=0, default=0)
-    credits_earned = serializers.IntegerField(min_value=0, default=0)
 
 
 class AddCoursesSerializer(serializers.ListSerializer):

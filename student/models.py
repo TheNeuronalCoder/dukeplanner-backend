@@ -11,8 +11,7 @@ class Semester(models.Model):
     account = models.ForeignKey('account.Account', on_delete=models.CASCADE, related_name='semesters')
     term = models.PositiveSmallIntegerField(choices=Term.choices)
     year = models.PositiveSmallIntegerField()
-    credits_attempted = models.PositiveSmallIntegerField(default=0)
-    credits_earned = models.PositiveSmallIntegerField(default=0)
+    # Credits attempted/earned are computed from the semester's classes.
 
     class Meta:
         ordering = ['account', 'year', 'term']
@@ -31,6 +30,10 @@ class Class(models.Model):
     semester = models.ForeignKey(
         Semester, on_delete=models.CASCADE, null=True, blank=True, related_name='classes'
     )
+    # Within the course's min_credits..max_credits (variable-credit courses vary per student).
+    credits = models.PositiveSmallIntegerField()
+    # False when the class was failed, so its credits are attempted but not earned.
+    credits_earned = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = 'classes'

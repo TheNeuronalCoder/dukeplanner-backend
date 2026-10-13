@@ -1,6 +1,8 @@
 from collections import defaultdict
 
 from django.db import transaction
+from django.db.models import Q, Sum
+from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes, permission_classes
@@ -31,7 +33,9 @@ def courses(request):
 
     Returns the signed-in account's semesters in chronological order, each with
     the courses taken in it. Classes not yet placed in a semester are listed
-    under `unassigned`.
+    under `unassigned`. Each course's `credits` and `credits_earned` (false if
+    failed) are the student's; a semester's `credits_attempted` sums its classes'
+    credits and `credits_earned` sums those of the classes that were passed.
     """
     account = request.user
     classes = account.classes.select_related('course').order_by('course__prefix_id', 'course__number')
@@ -39,7 +43,17 @@ def courses(request):
     by_semester = defaultdict(list)
     for c in classes:
         # `id` is the Class pk, used by DELETE /student/courses/delete/.
-        by_semester[c.semester_id].append({'id': c.pk, **course_json(c.course)})
+        by_semester[c.semester_id].append({
+            'id': c.pk,
+            **course_json(c.course),
+            'credits': c.credits,
+            'credits_earned': c.credits_earned,
+        })
+
+    semesters = account.semesters.annotate(
+        attempted=Coalesce(Sum('classes__credits'), 0),
+        earned=Coalesce(Sum('classes__credits', filter=Q(classes__credits_earned=True)), 0),
+    ).order_by('year', 'term')
 
     return JsonResponse(
         {
@@ -48,11 +62,11 @@ def courses(request):
                     'id': s.pk,
                     'term': s.get_term_display(),
                     'year': s.year,
-                    'credits_attempted': s.credits_attempted,
-                    'credits_earned': s.credits_earned,
+                    'credits_attempted': s.attempted,
+                    'credits_earned': s.earned,
                     'courses': by_semester[s.pk],
                 }
-                for s in account.semesters.order_by('year', 'term')
+                for s in semesters
             ],
             'unassigned': by_semester[None],
         }
@@ -65,7 +79,7 @@ def requirements(request):
     """GET /student/requirements/
 
     Checks the signed-in account's programs (Curriculum, with its track if one is
-    chosen) against its classes, so a double major or a major with minors is
+    chosen) against its passed classes, so a double major or a major with minors is
     checked together. If a program has a track, only requirements common to it or
     specific to that track are returned.
 
@@ -100,7 +114,13 @@ def requirements(request):
         )
 
     curricula = account.programs.select_related('program').order_by('pk')
-    taken = {c.course.pk: c.course for c in account.classes.select_related('course')}
+    taken = {}
+    # Failed classes don't count toward any requirement.
+    for c in account.classes.filter(credits_earned=True).select_related('course'):
+        # Count the credits the student took, which can differ from the catalog's
+        # for variable-credit courses (course_credits reads `credits` first).
+        c.course.credits = c.credits
+        taken[c.course.pk] = c.course
 
     gened = None
 
@@ -189,7 +209,9 @@ def add_courses(request):
     """POST /student/courses/add/
 
     Adds classes to the signed-in account. `semester` is the pk of one of the
-    account's semesters; omit it or pass null to leave the class unassigned. A
+    account's semesters; omit it or pass null to leave the class unassigned.
+    `credits` defaults to the course's credits and must be within its range, and
+    `credits_earned` (false if failed) defaults to true. A
     course can't be listed twice in the same semester. Nothing is saved if any
     item is invalid.
 
@@ -199,6 +221,7 @@ def add_courses(request):
     Sample request body:
     [
         {"course": "CS 149", "semester": 3},
+        {"course": "IND 499", "semester": 3, "credits": 2, "credits_earned": false},
         {"course": "MATH 235"}
     ]
     """
@@ -208,7 +231,13 @@ def add_courses(request):
     account = request.user
     with transaction.atomic():
         classes = Class.objects.bulk_create(
-            Class(account=account, course=i['course'], semester=i['semester'])
+            Class(
+                account=account,
+                course=i['course'],
+                semester=i['semester'],
+                credits=i['credits'],
+                credits_earned=i['credits_earned'],
+            )
             for i in serializer.validated_data
         )
     return _added(account, classes, 'courses')
@@ -260,7 +289,7 @@ def add_semesters(request):
     Sample request body:
     [
         {"term": "fall", "year": 2025},
-        {"term": "spring", "year": 2026, "credits_attempted": 15, "credits_earned": 15}
+        {"term": "spring", "year": 2026}
     ]
     """
     serializer = add_serializer(AddSemesterSerializer, AddSemestersSerializer, request.data, request)
@@ -273,8 +302,6 @@ def add_semesters(request):
                 account=account,
                 term=Semester.Term[i['term'].upper()],
                 year=i['year'],
-                credits_attempted=i['credits_attempted'],
-                credits_earned=i['credits_earned'],
             )
             for i in serializer.validated_data
         )

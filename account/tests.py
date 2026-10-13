@@ -133,6 +133,10 @@ class SetupTests(APITestCase):
                 prefix=subject, number=number, title=f'{prefix} {number}',
                 credits=3, min_credits=3, max_credits=3,
             )
+        Course.objects.create(
+            prefix=Subject.objects.get(code='CS'), number='499', title='Honors Thesis',
+            credits=None, min_credits=1, max_credits=6,
+        )
 
     def setUp(self):
         self.account = Account.objects.create_user('abc', 'a', 'bc')
@@ -223,3 +227,43 @@ class SetupTests(APITestCase):
         self.client.force_authenticate(None)
 
         self.assertEqual(self.setup(self.body()).status_code, 401)
+
+    def test_setup_saves_credits_and_pass_fail(self):
+        response = self.setup(self.body(semesters=[{'term': 'fall', 'year': 2025, 'courses': [
+            {'course': 'CS 149', 'credits_earned': False},
+            {'course': 'CS 499', 'credits': 4},
+            'MATH 235',
+        ]}]))
+
+        self.assertEqual(response.status_code, 200, response.content)
+        classes = {c.course.code: c for c in self.account.classes.select_related('course')}
+        self.assertEqual((classes['CS 149'].credits, classes['CS 149'].credits_earned), (3, False))
+        self.assertEqual((classes['CS 499'].credits, classes['CS 499'].credits_earned), (4, True))
+        self.assertEqual((classes['MATH 235'].credits, classes['MATH 235'].credits_earned), (3, True))
+
+        semester = self.client.get('/student/courses/').json()['semesters'][0]
+        self.assertEqual((semester['credits_attempted'], semester['credits_earned']), (10, 7))
+
+    def test_variable_credits_default_to_minimum(self):
+        self.setup(self.body(semesters=[{'term': 'fall', 'year': 2025, 'courses': ['CS 499']}]))
+
+        self.assertEqual(self.account.classes.get().credits, 1)
+
+    def test_rejects_credits_outside_range(self):
+        for course, credits in [('CS 499', 7), ('CS 499', 0), ('CS 149', 4)]:
+            response = self.setup(self.body(semesters=[
+                {'term': 'fall', 'year': 2025, 'courses': [{'course': course, 'credits': credits}]},
+            ]))
+
+            self.assertEqual(response.status_code, 400, (course, credits))
+            self.assertIn('credits', response.json()['semesters'][0]['courses']['0'])
+        self.assertFalse(self.account.classes.exists())
+
+    def test_failed_classes_dont_count_toward_requirements(self):
+        self.setup(self.body(semesters=[{'term': 'fall', 'year': 2025, 'courses': [
+            {'course': 'CS 149', 'credits_earned': False},
+            {'course': 'CS 499', 'credits': 5},
+        ]}]))
+
+        courses = self.client.get('/student/requirements/').json()['courses']
+        self.assertEqual([(c['code'], c['credits']) for c in courses], [('CS 499', 5)])
