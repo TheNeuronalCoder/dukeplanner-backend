@@ -13,13 +13,13 @@ import yaml
 from .courses import course_credits, normalize_code
 from .status import SATISFIED, UNSATISFIED
 
-DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "gened.yaml"
+DATA_PATH = Path(__file__).resolve().parent.parent / 'data' / 'gened.yaml'
 
 # Placeholder groups in program requirements that stand for the whole Gen Ed
 # program, e.g. "General Education" or "General Education requirements" (but not
 # "Philosophy course (in addition to General Education courses)").
 PLACEHOLDER_RE = re.compile(
-    r"\s*general education(\s+(courses|requirements?))?\s*", re.IGNORECASE
+    r'\s*general education(\s+(courses|requirements?))?\s*', re.IGNORECASE
 )
 
 
@@ -35,10 +35,10 @@ def load():
 
 def cluster_id_for(text):
     """The id of the cluster a placeholder names, e.g. "Arts and Humanities" -> "C2"."""
-    wanted = (text or "").strip().lower()
-    for cluster in load()["clusters"]:
-        if cluster["name"].lower() == wanted:
-            return cluster["id"]
+    wanted = (text or '').strip().lower()
+    for cluster in load()['clusters']:
+        if cluster['name'].lower() == wanted:
+            return cluster['id']
     return None
 
 
@@ -52,7 +52,7 @@ def _assign(areas, candidates, exclusive):
     exclusive = [set(map(normalize_code, group)) for group in exclusive]
 
     def options(area, cands):
-        k = min(area["choose"], len(cands))
+        k = min(area['choose'], len(cands))
         for size in range(k, -1, -1):
             yield from combinations(cands, size)
 
@@ -70,7 +70,7 @@ def _assign(areas, candidates, exclusive):
             trial = used | set(combo)
             if any(len(trial & group) > 1 for group in exclusive):
                 continue
-            satisfied = len(combo) >= area["choose"]
+            satisfied = len(combo) >= area['choose']
             search(
                 i + 1,
                 trial,
@@ -93,50 +93,50 @@ def evaluate(taken):
 
     clusters = []
     all_used = []
-    for cluster in data["clusters"]:
-        areas = cluster["areas"]
+    for cluster in data['clusters']:
+        areas = cluster['areas']
         candidates = [
             [
                 code
-                for code in (normalize_code(c["code"]) for c in area["courses"])
+                for code in (normalize_code(c['code']) for c in area['courses'])
                 if code in taken_by_code
             ]
             for area in areas
         ]
-        chosen = _assign(areas, candidates, cluster.get("exclusive", []))
+        chosen = _assign(areas, candidates, cluster.get('exclusive', []))
         used_codes = {code for combo in chosen for code in combo}
 
         # Courses with an embedded lab also satisfy a "lab experience" area.
         embedded_labs = sorted(
-            normalize_code(c["code"])
+            normalize_code(c['code'])
             for area in areas
-            for c in area["courses"]
-            if c.get("includes_lab") and normalize_code(c["code"]) in used_codes
+            for c in area['courses']
+            if c.get('includes_lab') and normalize_code(c['code']) in used_codes
         )
 
         area_nodes = []
         for area, combo in zip(areas, chosen):
             satisfied_by = sorted(combo)
-            status = SATISFIED if len(combo) >= area["choose"] else UNSATISFIED
-            if status == UNSATISFIED and area.get("satisfied_by_embedded_lab") and embedded_labs:
+            status = SATISFIED if len(combo) >= area['choose'] else UNSATISFIED
+            if status == UNSATISFIED and area.get('satisfied_by_embedded_lab') and embedded_labs:
                 status = SATISFIED
                 satisfied_by = embedded_labs
             area_nodes.append(
                 {
-                    "code": area["code"],
-                    "name": area["name"],
-                    "choose": area["choose"],
-                    "notes": area["notes"],
-                    "status": status,
-                    "satisfied_by": satisfied_by,
-                    "courses": [
+                    'code': area['code'],
+                    'name': area['name'],
+                    'choose': area['choose'],
+                    'notes': area['notes'],
+                    'status': status,
+                    'satisfied_by': satisfied_by,
+                    'courses': [
                         {
-                            "code": c["code"],
-                            "title": c["title"],
-                            "taken": normalize_code(c["code"]) in taken_by_code,
-                            **({"note": c["note"]} if "note" in c else {}),
+                            'code': c['code'],
+                            'title': c['title'],
+                            'taken': normalize_code(c['code']) in taken_by_code,
+                            **({'note': c['note']} if 'note' in c else {}),
                         }
-                        for c in area["courses"]
+                        for c in area['courses']
                     ],
                 }
             )
@@ -144,30 +144,30 @@ def evaluate(taken):
         all_used.extend(taken_by_code[code] for code in used_codes)
         clusters.append(
             {
-                "id": cluster["id"],
-                "name": cluster["name"],
-                "notes": cluster["notes"],
-                "status": (
+                'id': cluster['id'],
+                'name': cluster['name'],
+                'notes': cluster['notes'],
+                'status': (
                     SATISFIED
-                    if all(a["status"] == SATISFIED for a in area_nodes)
+                    if all(a['status'] == SATISFIED for a in area_nodes)
                     else UNSATISFIED
                 ),
-                "areas": area_nodes,
+                'areas': area_nodes,
             }
         )
 
     node = {
-        "name": data["name"],
-        "catalog_year": data["catalog_year"],
-        "source": data["source"],
-        "total_credits": data["total_credits"],
-        "credits_earned": sum(course_credits(c) for c in all_used),
-        "status": (
+        'name': data['name'],
+        'catalog_year': data['catalog_year'],
+        'source': data['source'],
+        'total_credits': data['total_credits'],
+        'credits_earned': sum(course_credits(c) for c in all_used),
+        'status': (
             SATISFIED
-            if all(c["status"] == SATISFIED for c in clusters)
+            if all(c['status'] == SATISFIED for c in clusters)
             else UNSATISFIED
         ),
-        "satisfied_by": sorted(c.code for c in all_used),
-        "clusters": clusters,
+        'satisfied_by': sorted(c.code for c in all_used),
+        'clusters': clusters,
     }
     return node, all_used

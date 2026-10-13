@@ -38,9 +38,9 @@ from django.core.exceptions import ValidationError
 # --------------------------------------------------------------------------- #
 
 class Severity(str, Enum):
-    ERROR = "error"      # account is not valid / not set up
-    WARNING = "warning"  # valid, but the student should finish or double-check something
-    INFO = "info"        # planning facts worth surfacing (e.g. 150-credit double degree)
+    ERROR = 'error'      # account is not valid / not set up
+    WARNING = 'warning'  # valid, but the student should finish or double-check something
+    INFO = 'info'        # planning facts worth surfacing (e.g. 150-credit double degree)
 
 
 @dataclass(frozen=True)
@@ -52,17 +52,17 @@ class Issue:
 
 
 class ProgramKind(str, Enum):
-    DEGREE = "degree"
-    MINOR = "minor"
-    CERTIFICATE = "certificate"
-    OTHER = "other"  # preparation programs, ROTC, studies abroad, ...
+    DEGREE = 'degree'
+    MINOR = 'minor'
+    CERTIFICATE = 'certificate'
+    OTHER = 'other'  # preparation programs, ROTC, studies abroad, ...
 
 
 # --------------------------------------------------------------------------- #
 # Configuration (loaded from YAML)
 # --------------------------------------------------------------------------- #
 
-DEFAULT_CONFIG_PATH = Path(__file__).with_name("data/valid_account.yaml")
+DEFAULT_CONFIG_PATH = Path(__file__).with_name('data/valid_account.yaml')
 
 
 @dataclass(frozen=True)
@@ -70,7 +70,7 @@ class Exclusion:
     a: frozenset[str]
     b: frozenset[str]
     message: str
-    source: str = ""
+    source: str = ''
 
 
 @dataclass(frozen=True)
@@ -79,7 +79,7 @@ class Requirement:
     any_of: frozenset[str]
     severity: Severity
     message: str
-    source: str = ""
+    source: str = ''
 
 
 @dataclass(frozen=True)
@@ -89,7 +89,7 @@ class TrackRule:
     forbidden_with: frozenset[str]
     requires_any_of: frozenset[str]
     message: str
-    source: str = ""
+    source: str = ''
 
 
 @dataclass(frozen=True)
@@ -121,50 +121,50 @@ class Config:
 
 def parse_config(raw: dict) -> Config:
     raw = raw or {}
-    sem = raw.get("semesters") or {}
-    cls = raw.get("classes") or {}
+    sem = raw.get('semesters') or {}
+    cls = raw.get('classes') or {}
 
     program_types = {
-        str(t): (ProgramKind(v["kind"]), v.get("degree") or "")
-        for t, v in (raw.get("program_types") or {}).items()
+        str(t): (ProgramKind(v['kind']), v.get('degree') or '')
+        for t, v in (raw.get('program_types') or {}).items()
     }
     program_overrides = {
-        slug: (ProgramKind(v["kind"]) if v.get("kind") else None, v.get("degree"))
-        for slug, v in (raw.get("program_overrides") or {}).items()
+        slug: (ProgramKind(v['kind']) if v.get('kind') else None, v.get('degree'))
+        for slug, v in (raw.get('program_overrides') or {}).items()
     }
 
     def groups(key):
         return tuple(frozenset(g) for g in (raw.get(key) or []))
 
     excluded = tuple(
-        Exclusion(frozenset(e["a"]), frozenset(e["b"]), e["message"], e.get("source", ""))
-        for e in raw.get("excluded_combinations") or []
+        Exclusion(frozenset(e['a']), frozenset(e['b']), e['message'], e.get('source', ''))
+        for e in raw.get('excluded_combinations') or []
     )
     requires = tuple(
         Requirement(
-            r["program"], frozenset(r["any_of"]),
-            Severity(r.get("severity", "error")), r["message"], r.get("source", ""),
+            r['program'], frozenset(r['any_of']),
+            Severity(r.get('severity', 'error')), r['message'], r.get('source', ''),
         )
-        for r in raw.get("requires") or []
+        for r in raw.get('requires') or []
     )
     track_rules = tuple(
         TrackRule(
-            t["program"], re.compile(t["track_pattern"], re.IGNORECASE),
-            frozenset(t.get("forbidden_with") or []),
-            frozenset(t.get("requires_any_of") or []),
-            t["message"], t.get("source", ""),
+            t['program'], re.compile(t['track_pattern'], re.IGNORECASE),
+            frozenset(t.get('forbidden_with') or []),
+            frozenset(t.get('requires_any_of') or []),
+            t['message'], t.get('source', ''),
         )
-        for t in raw.get("track_rules") or []
+        for t in raw.get('track_rules') or []
     )
 
     return Config(
-        min_semester_year=int(sem.get("min_year", 1908)),
-        max_years_ahead=int(sem.get("max_years_ahead", 10)),
-        require_at_least_one_class=bool(cls.get("require_at_least_one", False)),
+        min_semester_year=int(sem.get('min_year', 1908)),
+        max_years_ahead=int(sem.get('max_years_ahead', 10)),
+        require_at_least_one_class=bool(cls.get('require_at_least_one', False)),
         program_types=program_types,
         program_overrides=program_overrides,
-        same_area=groups("same_area"),
-        same_major=groups("same_major"),
+        same_area=groups('same_area'),
+        same_major=groups('same_major'),
         excluded=excluded,
         requires=requires,
         track_rules=track_rules,
@@ -172,8 +172,8 @@ def parse_config(raw: dict) -> Config:
 
 
 def load_config(path: str | Path | None = None) -> Config:
-    path = Path(path or getattr(settings, "DUKE_PLANNER_VALID_ACCOUNT_YAML", DEFAULT_CONFIG_PATH))
-    with open(path, encoding="utf-8") as f:
+    path = Path(path or getattr(settings, 'DUKE_PLANNER_VALID_ACCOUNT_YAML', DEFAULT_CONFIG_PATH))
+    with open(path, encoding='utf-8') as f:
         return parse_config(yaml.safe_load(f))
 
 
@@ -188,7 +188,7 @@ def check_config(config: Config | None = None) -> list[str]:
     from catalog.models import Program
 
     config = config or get_config()
-    known = set(Program.objects.values_list("slug", flat=True))
+    known = set(Program.objects.values_list('slug', flat=True))
     return sorted(config.all_slugs() - known)
 
 
@@ -197,23 +197,23 @@ def check_config(config: Config | None = None) -> list[str]:
 # --------------------------------------------------------------------------- #
 
 # Fallback for types missing from the YAML: "b.s.", "m.ed.", "ph.d.", "au.d." ...
-_DEGREE_ABBR_RE = re.compile(r"(?:[a-z]{1,4}\.)+[a-z]{0,4}")
+_DEGREE_ABBR_RE = re.compile(r'(?:[a-z]{1,4}\.)+[a-z]{0,4}')
 
 
 def _guess_type(type_: str) -> tuple[ProgramKind, str]:
     t = type_.strip().lower()
-    if "minor" in t:
-        return ProgramKind.MINOR, ""
-    if "certificate" in t:
-        return ProgramKind.CERTIFICATE, ""
-    if _DEGREE_ABBR_RE.fullmatch(t.replace(" ", "")) or t.startswith(("bachelor", "master", "doctor")):
+    if 'minor' in t:
+        return ProgramKind.MINOR, ''
+    if 'certificate' in t:
+        return ProgramKind.CERTIFICATE, ''
+    if _DEGREE_ABBR_RE.fullmatch(t.replace(' ', '')) or t.startswith(('bachelor', 'master', 'doctor')):
         return ProgramKind.DEGREE, type_.strip()
-    return ProgramKind.OTHER, ""
+    return ProgramKind.OTHER, ''
 
 
 def classify(program, config: Config) -> tuple[ProgramKind, str]:
     """(kind, normalized degree) for a Program, applying overrides from the YAML."""
-    kind, degree = config.program_types.get(program.type or "") or _guess_type(program.type or "")
+    kind, degree = config.program_types.get(program.type or '') or _guess_type(program.type or '')
     o_kind, o_degree = config.program_overrides.get(program.slug, (None, None))
     return (o_kind or kind, o_degree or degree)
 
@@ -243,20 +243,20 @@ def check_programs(student_programs, programs_with_tracks: set[str], config: Con
 
     # 1. Must pursue at least one degree.
     if not degrees:
-        issues.append(Issue("no_degree", "Add at least one degree program (a major)."))
+        issues.append(Issue('no_degree', 'Add at least one degree program (a major).'))
 
     by_level = {
         level: [sp for sp in degrees if sp.program.level == level]
-        for level in ("undergraduate", "graduate")
+        for level in ('undergraduate', 'graduate')
     }
 
     # 2a. Minors / certificates need a degree at the same level.
     for sp in secondary:
         if degrees and not by_level.get(sp.program.level):
             issues.append(Issue(
-                "orphan_secondary_program",
-                f"{sp.program.name} is {sp.program.level}, but you have no "
-                f"{sp.program.level} degree program to attach it to.",
+                'orphan_secondary_program',
+                f'{sp.program.name} is {sp.program.level}, but you have no '
+                f'{sp.program.level} degree program to attach it to.',
                 obj=sp,
             ))
 
@@ -264,11 +264,11 @@ def check_programs(student_programs, programs_with_tracks: set[str], config: Con
     for group in config.same_major:
         hits = sorted(group & degree_slugs)
         if len(hits) > 1:
-            names = " and ".join(by_slug[s].program.name for s in hits)
+            names = ' and '.join(by_slug[s].program.name for s in hits)
             issues.append(Issue(
-                "duplicate_major",
-                f"{names} are the same major; a double major or double degree needs "
-                "two different majors.",
+                'duplicate_major',
+                f'{names} are the same major; a double major or double degree needs '
+                'two different majors.',
                 obj=by_slug[hits[-1]],
             ))
 
@@ -280,9 +280,9 @@ def check_programs(student_programs, programs_with_tracks: set[str], config: Con
         for s in sorted(group & slugs):
             if info[s][0] == ProgramKind.MINOR:
                 issues.append(Issue(
-                    "major_minor_same_area",
+                    'major_minor_same_area',
                     f"You can't minor in {by_slug[s].program.name} while majoring in "
-                    f"{by_slug[area_degrees[0]].program.name} (same area).",
+                    f'{by_slug[area_degrees[0]].program.name} (same area).',
                     obj=by_slug[s],
                 ))
 
@@ -290,13 +290,13 @@ def check_programs(student_programs, programs_with_tracks: set[str], config: Con
     for rule in config.excluded:
         a_hits, b_hits = sorted(rule.a & slugs), sorted(rule.b & slugs)
         if any(x != y for x in a_hits for y in b_hits):
-            issues.append(Issue("excluded_combination", rule.message, obj=by_slug[b_hits[0]]))
+            issues.append(Issue('excluded_combination', rule.message, obj=by_slug[b_hits[0]]))
 
     # 2e. Programs that require another program.
     for rule in config.requires:
         if rule.program in slugs and not (rule.any_of & slugs):
             issues.append(Issue(
-                "missing_required_program", rule.message,
+                'missing_required_program', rule.message,
                 severity=rule.severity, obj=by_slug[rule.program],
             ))
 
@@ -304,7 +304,7 @@ def check_programs(student_programs, programs_with_tracks: set[str], config: Con
     for sp in sps:
         if sp.track_id is not None and sp.track.program_id != sp.program.slug:
             issues.append(Issue(
-                "track_wrong_program",
+                'track_wrong_program',
                 f"Concentration '{sp.track.name}' doesn't belong to {sp.program.name}.",
                 obj=sp,
             ))
@@ -312,8 +312,8 @@ def check_programs(student_programs, programs_with_tracks: set[str], config: Con
         if sp.track_id is None:
             if sp.program.slug in programs_with_tracks:
                 issues.append(Issue(
-                    "track_not_chosen",
-                    f"Choose a concentration for {sp.program.name}.",
+                    'track_not_chosen',
+                    f'Choose a concentration for {sp.program.name}.',
                     severity=Severity.WARNING,
                     obj=sp,
                 ))
@@ -324,28 +324,28 @@ def check_programs(student_programs, programs_with_tracks: set[str], config: Con
             forbidden = rule.forbidden_with & slugs
             missing = rule.requires_any_of and not (rule.requires_any_of & slugs)
             if forbidden or missing:
-                issues.append(Issue("track_not_open", rule.message, obj=sp))
+                issues.append(Issue('track_not_open', rule.message, obj=sp))
 
     # 2g. Planning facts.
-    ug_degrees = {info[sp.program.slug][1] for sp in by_level["undergraduate"]}
+    ug_degrees = {info[sp.program.slug][1] for sp in by_level['undergraduate']}
     if len(ug_degrees) >= 2:
         issues.append(Issue(
-            "double_degree",
-            "Your majors span different degree types, so this is a double degree: "
-            "JMU requires at least 150 credits, including 60 at JMU.",
+            'double_degree',
+            'Your majors span different degree types, so this is a double degree: '
+            'JMU requires at least 150 credits, including 60 at JMU.',
             severity=Severity.INFO,
         ))
-    elif len(by_level["undergraduate"]) >= 2:
+    elif len(by_level['undergraduate']) >= 2:
         issues.append(Issue(
-            "double_major",
-            "Double major (one degree): at least 120 credits, and you must meet the "
-            "degree requirements once plus every requirement of both majors.",
+            'double_major',
+            'Double major (one degree): at least 120 credits, and you must meet the '
+            'degree requirements once plus every requirement of both majors.',
             severity=Severity.INFO,
         ))
 
-    if by_level["undergraduate"] and by_level["graduate"]:
+    if by_level['undergraduate'] and by_level['graduate']:
         issues.append(Issue(
-            "mixed_levels",
+            'mixed_levels',
             "You have both undergraduate and graduate degree programs. That's only "
             "possible through a combined/accelerated program; double-check it's right.",
             severity=Severity.WARNING,
@@ -361,20 +361,20 @@ def check_semesters(semesters, config: Config, today: date | None = None) -> lis
     sems = list(semesters)
 
     if not sems:
-        issues.append(Issue("no_semester", "Add at least one semester."))
+        issues.append(Issue('no_semester', 'Add at least one semester.'))
 
     for s in sems:
         if not (config.min_semester_year <= s.year <= max_year):
             issues.append(Issue(
-                "semester_year_out_of_range",
-                f"{s}: year must be between {config.min_semester_year} and {max_year}.",
+                'semester_year_out_of_range',
+                f'{s}: year must be between {config.min_semester_year} and {max_year}.',
                 obj=s,
             ))
         if s.credits_earned > s.credits_attempted:
             issues.append(Issue(
-                "earned_exceeds_attempted",
+                'earned_exceeds_attempted',
                 f"{s}: credits earned ({s.credits_earned}) can't exceed credits "
-                f"attempted ({s.credits_attempted}).",
+                f'attempted ({s.credits_attempted}).',
                 obj=s,
             ))
     return issues
@@ -385,28 +385,28 @@ def check_classes(account_id, classes, config: Config) -> list[Issue]:
     cls = list(classes)
 
     if config.require_at_least_one_class and not cls:
-        issues.append(Issue("no_classes", "Add at least one class."))
+        issues.append(Issue('no_classes', 'Add at least one class.'))
 
     seen: set[tuple[int, object]] = set()
     for c in cls:
         if c.semester_id is None:
             issues.append(Issue(
-                "class_without_semester",
+                'class_without_semester',
                 f"{c.course.code} isn't assigned to a semester.",
                 obj=c,
             ))
             continue
         if c.semester.account_id != account_id:
             issues.append(Issue(
-                "class_semester_other_account",
+                'class_semester_other_account',
                 f"{c.course.code} is assigned to a semester that isn't yours.",
                 obj=c,
             ))
         key = (c.semester_id, c.course_id)
         if key in seen:
             issues.append(Issue(
-                "duplicate_class_in_semester",
-                f"{c.course.code} is listed twice in {c.semester}.",
+                'duplicate_class_in_semester',
+                f'{c.course.code} is listed twice in {c.semester}.',
                 obj=c,
             ))
         seen.add(key)
@@ -422,11 +422,11 @@ def validate_account(account, today: date | None = None, config: Config | None =
     from catalog.models import Track  # local import avoids app-loading cycles
 
     config = config or get_config()
-    student_programs = list(account.programs.select_related("program", "track"))
+    student_programs = list(account.programs.select_related('program', 'track'))
     slugs = [sp.program_id for sp in student_programs]
     programs_with_tracks = set(
         Track.objects.filter(program_id__in=slugs)
-        .values_list("program_id", flat=True)
+        .values_list('program_id', flat=True)
         .distinct()
     )
 
@@ -434,7 +434,7 @@ def validate_account(account, today: date | None = None, config: Config | None =
     issues += check_programs(student_programs, programs_with_tracks, config)
     issues += check_semesters(account.semesters.all(), config, today=today)
     issues += check_classes(
-        account.pk, account.classes.select_related("semester", "course"), config
+        account.pk, account.classes.select_related('semester', 'course'), config
     )
     return issues
 

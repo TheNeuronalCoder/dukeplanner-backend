@@ -16,22 +16,22 @@ from .courses import course_credits, course_json, course_number
 from .status import SATISFIED, UNSATISFIED, UNVERIFIED, combine
 
 # "Electives", "University electives", "University Elective(s)", ...
-ELECTIVES_RE = re.compile(r"\s*(university\s+)?electives?(\(s\))?\s*", re.IGNORECASE)
+ELECTIVES_RE = re.compile(r'\s*(university\s+)?electives?(\(s\))?\s*', re.IGNORECASE)
 
-DEGREE_REQUIREMENTS = "Degree Requirements"
+DEGREE_REQUIREMENTS = 'Degree Requirements'
 # Placeholders in "Degree Requirements" that summarize the program's other
 # sections, e.g. "Major requirements", "B.B.A. core courses", "Cognate
 # requirements", "Music Education, Vocal Track Requirements".
 SECTION_REFERENCE_RE = re.compile(
-    r"\b(major|core|concentration|cognate|prerequisites?|foundational|tracks?|"
-    r"sequence|licensure|biology requirements|nursing courses)\b",
+    r'\b(major|core|concentration|cognate|prerequisites?|foundational|tracks?|'
+    r'sequence|licensure|biology requirements|nursing courses)\b',
     re.IGNORECASE,
 )
 # Credit grants (e.g. "Credit for Associate Degree and prerequisites") aren't
 # section references even if they mention one.
-NOT_SECTION_REFERENCE_RE = re.compile(r"^\s*(credit|experiential)\b", re.IGNORECASE)
+NOT_SECTION_REFERENCE_RE = re.compile(r'^\s*(credit|experiential)\b', re.IGNORECASE)
 # Sections that are informational rather than requirements.
-INFORMATIONAL_SECTION_RE = re.compile(r"substitution|sample curriculum", re.IGNORECASE)
+INFORMATIONAL_SECTION_RE = re.compile(r'substitution|sample curriculum', re.IGNORECASE)
 
 Kind = RequirementGroup.Kind
 EachUnit = RequirementGroup.EachUnit
@@ -71,7 +71,7 @@ def _is_university_electives(group):
     """The "University electives" slot of a program's degree requirements."""
     return (
         group.kind == Kind.PLACEHOLDER
-        and ELECTIVES_RE.fullmatch(group.text or "") is not None
+        and ELECTIVES_RE.fullmatch(group.text or '') is not None
         and group.program_requirement.title == DEGREE_REQUIREMENTS
     )
 
@@ -87,7 +87,7 @@ def _degree_requirement_id(group):
 
 
 def _is_section_reference(group):
-    text = group.text or ""
+    text = group.text or ''
     return (
         group.kind == Kind.PLACEHOLDER
         and group.program_requirement.title == DEGREE_REQUIREMENTS
@@ -98,11 +98,11 @@ def _is_section_reference(group):
 
 def _filter_json(f):
     return {
-        "subject": f.subject_id,
-        "number_min": f.number_min,
-        "number_max": f.number_max,
-        "course": f.course_code,
-        "exclude": f.exclude,
+        'subject': f.subject_id,
+        'number_min': f.number_min,
+        'number_max': f.number_max,
+        'course': f.course_code,
+        'exclude': f.exclude,
     }
 
 
@@ -124,26 +124,26 @@ def _evaluate(group, children_by_parent, taken, ctx, inherited=None):
     """
     children = children_by_parent.get(group.pk, [])
     node = {
-        "id": group.pk,
-        "kind": group.kind,
-        "text": group.text,
-        "condition": group.condition,
-        "needs_review": group.needs_review,
-        "min_count": group.min_count,
-        "max_count": group.max_count,
-        "min_credits": group.min_credits,
-        "max_credits": group.max_credits,
+        'id': group.pk,
+        'kind': group.kind,
+        'text': group.text,
+        'condition': group.condition,
+        'needs_review': group.needs_review,
+        'min_count': group.min_count,
+        'max_count': group.max_count,
+        'min_credits': group.min_credits,
+        'max_credits': group.max_credits,
     }
 
     if group.kind == Kind.NOTE:
-        node["status"] = None
-        node["children"] = [
+        node['status'] = None
+        node['children'] = [
             _evaluate(c, children_by_parent, taken, ctx)[0] for c in children
         ]
         return node, []
 
     if group.kind == Kind.PLACEHOLDER:
-        node["children"] = []
+        node['children'] = []
         return _evaluate_placeholder(group, node, ctx)
 
     child_inherited = (group.each_unit, group.each_min) if group.each_min else None
@@ -151,17 +151,17 @@ def _evaluate(group, children_by_parent, taken, ctx, inherited=None):
         _evaluate(c, children_by_parent, taken, ctx, child_inherited)
         for c in children
     ]
-    node["children"] = [r[0] for r in child_results]
+    node['children'] = [r[0] for r in child_results]
     # Notes are informational and never count toward a requirement.
-    counted = [r for r in child_results if r[0]["kind"] != Kind.NOTE]
+    counted = [r for r in child_results if r[0]['kind'] != Kind.NOTE]
 
     listed = [cr.course for cr in group.course_requirements.all()]
-    node["courses"] = [
-        {**course_json(c), "taken": c.pk in taken} for c in listed
+    node['courses'] = [
+        {**course_json(c), 'taken': c.pk in taken} for c in listed
     ]
     filters = list(group.course_filters.all())
     if filters:
-        node["filters"] = [_filter_json(f) for f in filters]
+        node['filters'] = [_filter_json(f) for f in filters]
 
     # Taken courses that count directly toward this group, deduplicated.
     direct = {c.pk: c for c in listed if c.pk in taken}
@@ -171,11 +171,11 @@ def _evaluate(group, children_by_parent, taken, ctx, inherited=None):
 
     used = list(direct)
     for child_node, child_used in counted:
-        if child_node["status"] == SATISFIED:
+        if child_node['status'] == SATISFIED:
             used.extend(child_used)
 
     if group.kind == Kind.ALL:
-        statuses = [r[0]["status"] for r in counted]
+        statuses = [r[0]['status'] for r in counted]
         if any(c.pk not in taken for c in listed):
             statuses.append(UNSATISFIED)
         if filters:
@@ -186,58 +186,58 @@ def _evaluate(group, children_by_parent, taken, ctx, inherited=None):
     else:  # Kind.CHOOSE
         status = _evaluate_choose(group, counted, direct, used, inherited)
 
-    node["status"] = status
-    node["satisfied_by"] = sorted({c.code for c in used})
+    node['status'] = status
+    node['satisfied_by'] = sorted({c.code for c in used})
     return node, used
 
 
 def _evaluate_placeholder(group, node, ctx):
-    gened = ctx["gened"]
+    gened = ctx['gened']
     if gened and gen_ed.is_gened_placeholder(group.text):
         gened_json, gened_used = gened
-        node["general_education"] = True
-        node["status"] = gened_json["status"]
-        node["satisfied_by"] = gened_json["satisfied_by"]
+        node['general_education'] = True
+        node['status'] = gened_json['status']
+        node['satisfied_by'] = gened_json['satisfied_by']
         return node, gened_used
 
     cluster_id = gen_ed.cluster_id_for(group.text)
     if gened and cluster_id:
         gened_json, gened_used = gened
-        cluster = next(c for c in gened_json["clusters"] if c["id"] == cluster_id)
-        codes = {code for a in cluster["areas"] for code in a["satisfied_by"]}
-        node["general_education"] = cluster_id
-        node["status"] = cluster["status"]
-        node["satisfied_by"] = sorted(codes)
+        cluster = next(c for c in gened_json['clusters'] if c['id'] == cluster_id)
+        codes = {code for a in cluster['areas'] for code in a['satisfied_by']}
+        node['general_education'] = cluster_id
+        node['status'] = cluster['status']
+        node['satisfied_by'] = sorted(codes)
         return node, [c for c in gened_used if c.code in codes]
 
     degree_id = _degree_requirement_id(group)
-    if degree_id in ctx["degree"]:
-        degree_json, degree_used = ctx["degree"][degree_id]
-        node["degree_requirement"] = degree_id
-        node["status"] = degree_json["status"]
-        node["satisfied_by"] = degree_json["satisfied_by"]
+    if degree_id in ctx['degree']:
+        degree_json, degree_used = ctx['degree'][degree_id]
+        node['degree_requirement'] = degree_id
+        node['status'] = degree_json['status']
+        node['satisfied_by'] = degree_json['satisfied_by']
         return node, degree_used
 
-    if ctx["electives"] is not None and _is_university_electives(group):
-        electives = ctx["electives"]
+    if ctx['electives'] is not None and _is_university_electives(group):
+        electives = ctx['electives']
         credits = sum(course_credits(c) for c in electives)
-        node["university_electives"] = True
-        node["credits_earned"] = credits
-        node["status"] = (
+        node['university_electives'] = True
+        node['credits_earned'] = credits
+        node['status'] = (
             SATISFIED if credits >= (group.min_credits or 0) else UNSATISFIED
         )
-        node["satisfied_by"] = sorted(c.code for c in electives)
+        node['satisfied_by'] = sorted(c.code for c in electives)
         return node, electives
 
-    if ctx["sections"] is not None and _is_section_reference(group):
+    if ctx['sections'] is not None and _is_section_reference(group):
         # The referenced courses are listed (and counted) in those sections.
-        node["references_sections"] = True
-        node["status"] = ctx["sections"]
-        node["satisfied_by"] = []
+        node['references_sections'] = True
+        node['status'] = ctx['sections']
+        node['satisfied_by'] = []
         return node, []
 
-    node["status"] = UNVERIFIED
-    node["satisfied_by"] = []
+    node['status'] = UNVERIFIED
+    node['satisfied_by'] = []
     return node, []
 
 
@@ -254,7 +254,7 @@ def _apply_inherited(status, inherited, used):
 
 
 def _evaluate_choose(group, counted, direct, used, inherited):
-    satisfied_children = [r for r in counted if r[0]["status"] == SATISFIED]
+    satisfied_children = [r for r in counted if r[0]['status'] == SATISFIED]
     count = len(direct) + len(satisfied_children)
     credits = sum(course_credits(c) for c in used)
 
@@ -275,15 +275,15 @@ def _evaluate_choose(group, counted, direct, used, inherited):
     if met:
         return SATISFIED
     # Can't rule it out if an unverifiable option could make up the difference.
-    if any(r[0]["status"] == UNVERIFIED for r in counted):
+    if any(r[0]['status'] == UNVERIFIED for r in counted):
         return UNVERIFIED
     return UNSATISFIED
 
 
 def _claimed_codes(node, codes):
     """Collect the codes of courses counted anywhere in an evaluated tree."""
-    codes.update(node.get("satisfied_by", []))
-    for child in node.get("children", []):
+    codes.update(node.get('satisfied_by', []))
+    for child in node.get('children', []):
         _claimed_codes(child, codes)
     return codes
 
@@ -292,10 +292,10 @@ def _program_codes(node, codes):
     """Like _claimed_codes, but only courses the program itself lists or filters
     for; placeholders (General Education, B.A./B.S. requirements, University
     electives, section references) are shared by every program, so skipped."""
-    if node["kind"] == Kind.PLACEHOLDER:
+    if node['kind'] == Kind.PLACEHOLDER:
         return codes
-    codes.update(node.get("satisfied_by", []))
-    for child in node.get("children", []):
+    codes.update(node.get('satisfied_by', []))
+    for child in node.get('children', []):
         _program_codes(child, codes)
     return codes
 
@@ -310,18 +310,18 @@ def evaluate_program(program, track_id, taken, get_gened):
     Returns (json, program_codes, requires_gened) where program_codes are the codes
     of courses the program's own requirements count (see _program_codes).
     """
-    reqs = ProgramRequirement.objects.filter(program=program).select_related("track")
+    reqs = ProgramRequirement.objects.filter(program=program).select_related('track')
     if track_id:
         reqs = reqs.filter(track__isnull=True) | reqs.filter(track_id=track_id)
 
     groups = RequirementGroup.objects.filter(
         program_requirement__in=reqs
-    ).select_related("program_requirement").prefetch_related(
+    ).select_related('program_requirement').prefetch_related(
         Prefetch(
-            "course_requirements",
-            queryset=CourseRequirement.objects.select_related("course"),
+            'course_requirements',
+            queryset=CourseRequirement.objects.select_related('course'),
         ),
-        Prefetch("course_filters", queryset=CourseFilter.objects.order_by("pk")),
+        Prefetch('course_filters', queryset=CourseFilter.objects.order_by('pk')),
     )
     children_by_parent = defaultdict(list)
     roots = {}
@@ -365,8 +365,8 @@ def evaluate_program(program, track_id, taken, get_gened):
                 # Without a chosen track we can't tell which concentration counts.
                 statuses.append(UNVERIFIED)
                 continue
-            statuses.append(tree["status"] or SATISFIED)
-        ctx["sections"] = combine(statuses) if statuses else UNVERIFIED
+            statuses.append(tree['status'] or SATISFIED)
+        ctx['sections'] = combine(statuses) if statuses else UNVERIFIED
         for req in reqs:
             if req.title == DEGREE_REQUIREMENTS:
                 trees[req.pk], _ = _evaluate(
@@ -374,7 +374,7 @@ def evaluate_program(program, track_id, taken, get_gened):
                 )
         return trees
 
-    ctx = {"gened": gened, "degree": degree, "electives": None, "sections": None}
+    ctx = {'gened': gened, 'degree': degree, 'electives': None, 'sections': None}
     electives = None
     if has_electives:
         # First pass: find the courses every other requirement counts; the rest
@@ -384,7 +384,7 @@ def evaluate_program(program, track_id, taken, get_gened):
         for tree in evaluate_all(ctx).values():
             _claimed_codes(tree, claimed)
         electives = [c for c in taken.values() if c.code not in claimed]
-        ctx["electives"] = electives
+        ctx['electives'] = electives
     trees = evaluate_all(ctx)
 
     buckets = {SATISFIED: [], UNSATISFIED: [], UNVERIFIED: []}
@@ -394,36 +394,36 @@ def evaluate_program(program, track_id, taken, get_gened):
         if not INFORMATIONAL_SECTION_RE.search(req.title):
             _program_codes(tree, program_codes)
         # A requirement that is only a note has nothing to check.
-        status = tree["status"] or SATISFIED
+        status = tree['status'] or SATISFIED
         buckets[status].append(
             {
-                "id": req.pk,
-                "title": req.title,
-                "subsection": req.subsection,
-                "cluster": req.cluster,
-                "track": {"id": req.track.pk, "name": req.track.name} if req.track else None,
-                "credits_min": req.credits_min,
-                "credits_max": req.credits_max,
-                "status": status,
-                "rules": tree,
+                'id': req.pk,
+                'title': req.title,
+                'subsection': req.subsection,
+                'cluster': req.cluster,
+                'track': {'id': req.track.pk, 'name': req.track.name} if req.track else None,
+                'credits_min': req.credits_min,
+                'credits_max': req.credits_max,
+                'status': status,
+                'rules': tree,
             }
         )
 
-    statuses = [r["status"] for b in buckets.values() for r in b]
+    statuses = [r['status'] for b in buckets.values() for r in b]
     result = {
-        "program": {"slug": program.slug, "name": program.name, "type": program.type},
-        "track": int(track_id) if track_id else None,
-        "status": combine(statuses),
-        "satisfied": buckets[SATISFIED],
-        "unsatisfied": buckets[UNSATISFIED],
-        "unverified": buckets[UNVERIFIED],
+        'program': {'slug': program.slug, 'name': program.name, 'type': program.type},
+        'track': int(track_id) if track_id else None,
+        'status': combine(statuses),
+        'satisfied': buckets[SATISFIED],
+        'unsatisfied': buckets[UNSATISFIED],
+        'unverified': buckets[UNVERIFIED],
         # Only present for B.A./B.S. programs.
-        "degree_requirements": [j for j, _ in degree.values()] if degree else None,
+        'degree_requirements': [j for j, _ in degree.values()] if degree else None,
         # Only present for programs with a University electives requirement.
-        "university_electives": (
+        'university_electives': (
             {
-                "credits_earned": sum(course_credits(c) for c in electives),
-                "satisfied_by": sorted(c.code for c in electives),
+                'credits_earned': sum(course_credits(c) for c in electives),
+                'satisfied_by': sorted(c.code for c in electives),
             }
             if electives is not None
             else None

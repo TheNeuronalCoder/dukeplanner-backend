@@ -6,15 +6,15 @@ class Subject(models.Model):
     name = models.CharField(max_length=100)
 
     class Meta:
-        ordering = ["code"]
+        ordering = ['code']
 
     def __str__(self):
-        return f"{self.code} - {self.name}"
+        return f'{self.code} - {self.name}'
 
 
 class Course(models.Model):
     prefix = models.ForeignKey(
-        Subject, on_delete=models.PROTECT, related_name="courses", db_column="prefix"
+        Subject, on_delete=models.PROTECT, related_name='courses', db_column='prefix'
     )
     # Not purely numeric: e.g. "499A", "196L".
     number = models.CharField(max_length=8)
@@ -28,23 +28,23 @@ class Course(models.Model):
     corequisites = models.TextField(null=True, blank=True)
 
     class Meta:
-        ordering = ["prefix", "number"]
+        ordering = ['prefix', 'number']
         constraints = [
-            models.UniqueConstraint(fields=["prefix", "number"], name="unique_course_code"),
+            models.UniqueConstraint(fields=['prefix', 'number'], name='unique_course_code'),
         ]
 
     @property
     def code(self):
-        return f"{self.prefix_id} {self.number}"
+        return f'{self.prefix_id} {self.number}'
 
     def __str__(self):
-        return f"{self.code}: {self.title}"
+        return f'{self.code}: {self.title}'
 
 
 class Program(models.Model):
     class Level(models.TextChoices):
-        UNDERGRADUATE = "undergraduate", "Undergraduate"
-        GRADUATE = "graduate", "Graduate"
+        UNDERGRADUATE = 'undergraduate', 'Undergraduate'
+        GRADUATE = 'graduate', 'Graduate'
 
     slug = models.SlugField(max_length=128, primary_key=True)
     name = models.CharField(max_length=200)
@@ -57,65 +57,65 @@ class Program(models.Model):
     keywords = models.JSONField(default=list, blank=True)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ['name']
 
     def __str__(self):
         return self.name
 
 
 class Track(models.Model):
-    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="tracks")
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='tracks')
     name = models.CharField(max_length=200)
 
     class Meta:
-        ordering = ["program", "name"]
+        ordering = ['program', 'name']
         constraints = [
-            models.UniqueConstraint(fields=["program", "name"], name="unique_track_per_program"),
+            models.UniqueConstraint(fields=['program', 'name'], name='unique_track_per_program'),
         ]
 
     def __str__(self):
-        return f"{self.program.name} - {self.name}"
+        return f'{self.program.name} - {self.name}'
 
 
 class ProgramRequirement(models.Model):
     program = models.ForeignKey(
-        Program, on_delete=models.CASCADE, related_name="requirements"
+        Program, on_delete=models.CASCADE, related_name='requirements'
     )
     title = models.CharField(max_length=200)
     subsection = models.CharField(max_length=200, null=True, blank=True)
     # Set when the requirement only applies to one track/concentration.
     track = models.ForeignKey(
-        Track, on_delete=models.CASCADE, null=True, blank=True, related_name="requirements"
+        Track, on_delete=models.CASCADE, null=True, blank=True, related_name='requirements'
     )
     cluster = models.CharField(max_length=128, null=True, blank=True)
     credits_min = models.PositiveSmallIntegerField(null=True, blank=True)
     credits_max = models.PositiveSmallIntegerField(null=True, blank=True)
 
     class Meta:
-        ordering = ["program", "pk"]
+        ordering = ['program', 'pk']
 
     def __str__(self):
-        return f"{self.program_id}: {self.title}"
+        return f'{self.program_id}: {self.title}'
 
 
 class RequirementGroup(models.Model):
     """A node in a requirement's rule tree. Each ProgramRequirement has one root group."""
 
     class Kind(models.TextChoices):
-        ALL = "all", "All of"
-        CHOOSE = "choose", "Choose"
-        PLACEHOLDER = "placeholder", "Placeholder"
-        NOTE = "note", "Note"
+        ALL = 'all', 'All of'
+        CHOOSE = 'choose', 'Choose'
+        PLACEHOLDER = 'placeholder', 'Placeholder'
+        NOTE = 'note', 'Note'
 
     class EachUnit(models.TextChoices):
-        COUNT = "count", "Courses"
-        CREDITS = "credits", "Credits"
+        COUNT = 'count', 'Courses'
+        CREDITS = 'credits', 'Credits'
 
     program_requirement = models.ForeignKey(
-        ProgramRequirement, on_delete=models.CASCADE, related_name="groups"
+        ProgramRequirement, on_delete=models.CASCADE, related_name='groups'
     )
     parent_group = models.ForeignKey(
-        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="children"
+        'self', on_delete=models.CASCADE, null=True, blank=True, related_name='children'
     )
     position = models.PositiveIntegerField(default=0)
     kind = models.CharField(max_length=16, choices=Kind.choices)
@@ -135,30 +135,30 @@ class RequirementGroup(models.Model):
     needs_review = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ["program_requirement", "parent_group_id", "position"]
+        ordering = ['program_requirement', 'parent_group_id', 'position']
 
     def __str__(self):
-        return f"{self.get_kind_display()} group #{self.pk} ({self.program_requirement})"
+        return f'{self.get_kind_display()} group #{self.pk} ({self.program_requirement})'
 
 
 class CourseRequirement(models.Model):
     """A specific course listed within a requirement group."""
 
     group = models.ForeignKey(
-        RequirementGroup, on_delete=models.CASCADE, related_name="course_requirements"
+        RequirementGroup, on_delete=models.CASCADE, related_name='course_requirements'
     )
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name="requirement_entries"
+        Course, on_delete=models.CASCADE, related_name='requirement_entries'
     )
     # Course code as written in the catalog, e.g. "COB 191".
     course_code = models.CharField(max_length=16)
     position = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["group", "position"]
+        ordering = ['group', 'position']
 
     def __str__(self):
-        return f"{self.course_code} in group #{self.group_id}"
+        return f'{self.course_code} in group #{self.group_id}'
 
 
 class CourseFilter(models.Model):
@@ -168,14 +168,14 @@ class CourseFilter(models.Model):
     """
 
     group = models.ForeignKey(
-        RequirementGroup, on_delete=models.CASCADE, related_name="course_filters"
+        RequirementGroup, on_delete=models.CASCADE, related_name='course_filters'
     )
     subject = models.ForeignKey(
         Subject,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="course_filters",
+        related_name='course_filters',
     )
     number_min = models.PositiveSmallIntegerField(null=True, blank=True)
     number_max = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -184,7 +184,7 @@ class CourseFilter(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="course_filters",
+        related_name='course_filters',
     )
     course_code = models.CharField(max_length=16, null=True, blank=True)
     exclude = models.BooleanField(default=False)
@@ -193,7 +193,7 @@ class CourseFilter(models.Model):
         if self.course_code:
             target = self.course_code
         else:
-            rng = ""
+            rng = ''
             if self.number_min is not None or self.number_max is not None:
                 rng = f" {self.number_min or ''}-{self.number_max or ''}"
             target = f"{self.subject_id or 'any'}{rng}"

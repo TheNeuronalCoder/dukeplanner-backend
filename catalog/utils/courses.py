@@ -9,16 +9,16 @@ def course_credits(course):
 
 def course_number(course):
     """Leading numeric part of a course number, e.g. "499A" -> 499."""
-    match = re.match(r"\d+", course.number)
+    match = re.match(r'\d+', course.number)
     return int(match.group()) if match else None
 
 
 def normalize_code(code):
-    return " ".join(code.upper().split())
+    return ' '.join(code.upper().split())
 
 
 def course_json(course):
-    return {"code": course.code, "title": course.title, "credits": course_credits(course)}
+    return {'code': course.code, 'title': course.title, 'credits': course_credits(course)}
 
 
 def lookup_courses(codes):
@@ -26,7 +26,7 @@ def lookup_courses(codes):
     wanted = {}
     unknown = []
     for code in codes:
-        match = re.fullmatch(r"([A-Za-z]+)\s*(\S+)", code)
+        match = re.fullmatch(r'([A-Za-z]+)\s*(\S+)', code)
         if not match:
             unknown.append(code)
             continue

@@ -19,19 +19,19 @@ def _parse_list(request, name):
     """Values of a comma-separated and/or repeated query parameter, deduplicated."""
     values = []
     for value in request.GET.getlist(name):
-        values.extend(part.strip() for part in value.split(","))
+        values.extend(part.strip() for part in value.split(','))
     return list(dict.fromkeys(v for v in values if v))
 
 
 def _parse_search(request):
     """(query, limit) from `q` and `limit`, or (None, error response)."""
-    query = " ".join(request.GET.get("q", "").split())
+    query = ' '.join(request.GET.get('q', '').split())
     if not query:
-        return None, JsonResponse({"error": "Missing 'q' parameter."}, status=400)
-    limit = request.GET.get("limit", str(SEARCH_DEFAULT_LIMIT))
+        return None, JsonResponse({'error': "Missing 'q' parameter."}, status=400)
+    limit = request.GET.get('limit', str(SEARCH_DEFAULT_LIMIT))
     if not limit.isdigit() or int(limit) < 1:
         return None, JsonResponse(
-            {"error": "'limit' must be a positive integer."}, status=400
+            {'error': "'limit' must be a positive integer."}, status=400
         )
     return query, min(int(limit), SEARCH_MAX_LIMIT)
 
@@ -42,7 +42,7 @@ def _all_terms(fields, terms):
     for term in terms:
         any_field = Q()
         for field in fields:
-            any_field |= Q(**{f"{field}__icontains": term})
+            any_field |= Q(**{f'{field}__icontains': term})
         q &= any_field
     return q
 
@@ -59,7 +59,7 @@ def search_courses(request):
     if query is None:
         return limit
 
-    code_match = re.fullmatch(r"([A-Za-z]+)\s*(\d\w*)?", query)
+    code_match = re.fullmatch(r'([A-Za-z]+)\s*(\d\w*)?', query)
     exact = prefix = Q(pk__in=[])
     if code_match:
         subject, number = code_match.group(1).upper(), code_match.group(2)
@@ -68,10 +68,10 @@ def search_courses(request):
             prefix = Q(prefix=subject, number__istartswith=number)
         else:
             prefix = Q(prefix=subject)
-    title = _all_terms(["title"], query.split())
+    title = _all_terms(['title'], query.split())
 
     courses = Course.objects.filter(exact | prefix | title)
-    subjects = [s.upper() for s in _parse_list(request, "subject")]
+    subjects = [s.upper() for s in _parse_list(request, 'subject')]
     if subjects:
         courses = courses.filter(prefix__in=subjects)
     courses = courses.annotate(
@@ -82,10 +82,10 @@ def search_courses(request):
             default=Value(3),
             output_field=IntegerField(),
         )
-    ).order_by("rank", "prefix", "number")
+    ).order_by('rank', 'prefix', 'number')
 
     return JsonResponse(
-        {"results": [course_json(c) for c in courses[:limit]]}
+        {'results': [course_json(c) for c in courses[:limit]]}
     )
 
 
@@ -103,18 +103,18 @@ def search_programs(request):
         return limit
 
     programs = Program.objects.annotate(
-        keywords_text=Cast("keywords", TextField())
-    ).filter(_all_terms(["name", "keywords_text"], query.split()))
-    level = request.GET.get("level")
+        keywords_text=Cast('keywords', TextField())
+    ).filter(_all_terms(['name', 'keywords_text'], query.split()))
+    level = request.GET.get('level')
     if level:
         if level not in Program.Level.values:
             return JsonResponse(
-                {"error": f"Unknown level '{level}'. Expected one of: "
+                {'error': f"Unknown level '{level}'. Expected one of: "
                           f"{', '.join(Program.Level.values)}."},
                 status=400,
             )
         programs = programs.filter(level=level)
-    types = _parse_list(request, "type")
+    types = _parse_list(request, 'type')
     if types:
         programs = programs.filter(type__in=types)
     programs = (
@@ -122,25 +122,25 @@ def search_programs(request):
             rank=Case(
                 When(name__istartswith=query, then=Value(0)),
                 When(name__icontains=query, then=Value(1)),
-                When(_all_terms(["name"], query.split()), then=Value(2)),
+                When(_all_terms(['name'], query.split()), then=Value(2)),
                 default=Value(3),
                 output_field=IntegerField(),
             )
         )
-        .order_by("rank", "name")
-        .prefetch_related("tracks")
+        .order_by('rank', 'name')
+        .prefetch_related('tracks')
     )
 
     return JsonResponse(
         {
-            "results": [
+            'results': [
                 {
-                    "slug": p.slug,
-                    "name": p.name,
-                    "level": p.level,
-                    "type": p.type,
-                    "url": p.url,
-                    "tracks": [{"id": t.pk, "name": t.name} for t in p.tracks.all()],
+                    'slug': p.slug,
+                    'name': p.name,
+                    'level': p.level,
+                    'type': p.type,
+                    'url': p.url,
+                    'tracks': [{'id': t.pk, 'name': t.name} for t in p.tracks.all()],
                 }
                 for p in programs[:limit]
             ]
@@ -171,17 +171,17 @@ def requirements(request):
     `shared_courses` maps each course counted by more than one program's own
     requirements to those programs' slugs, for checking overlap limits.
     """
-    slugs = _parse_list(request, "program")
+    slugs = _parse_list(request, 'program')
     if not slugs:
-        return JsonResponse({"error": "Missing 'program' parameter."}, status=400)
+        return JsonResponse({'error': "Missing 'program' parameter."}, status=400)
     programs = Program.objects.in_bulk(slugs)
     missing = [s for s in slugs if s not in programs]
     if missing:
         return JsonResponse(
-            {"error": f"Unknown program(s): {', '.join(missing)}."}, status=404
+            {'error': f"Unknown program(s): {', '.join(missing)}."}, status=404
         )
 
-    track_ids = _parse_list(request, "track")
+    track_ids = _parse_list(request, 'track')
     bad = [t for t in track_ids if not t.isdigit()]
     tracks = Track.objects.filter(
         pk__in=[t for t in track_ids if t.isdigit()], program__in=slugs
@@ -189,19 +189,19 @@ def requirements(request):
     bad += [t for t in track_ids if t.isdigit() and int(t) not in tracks]
     if bad:
         return JsonResponse(
-            {"error": f"Unknown track(s) for the given programs: {', '.join(bad)}."},
+            {'error': f"Unknown track(s) for the given programs: {', '.join(bad)}."},
             status=404,
         )
     track_by_program = {}
     for track in tracks.values():
         if track.program_id in track_by_program:
             return JsonResponse(
-                {"error": f"Multiple tracks given for program '{track.program_id}'."},
+                {'error': f"Multiple tracks given for program '{track.program_id}'."},
                 status=400,
             )
         track_by_program[track.program_id] = str(track.pk)
 
-    taken, unknown = lookup_courses(_parse_list(request, "courses"))
+    taken, unknown = lookup_courses(_parse_list(request, 'courses'))
 
     gened = None
 
@@ -225,12 +225,12 @@ def requirements(request):
 
     return JsonResponse(
         {
-            "programs": results,
-            "courses": [course_json(c) for c in taken.values()],
-            "unknown_courses": unknown,
+            'programs': results,
+            'courses': [course_json(c) for c in taken.values()],
+            'unknown_courses': unknown,
             # Only present if some program requires General Education.
-            "general_education": gened[0] if requires_gened else None,
-            "shared_courses": {
+            'general_education': gened[0] if requires_gened else None,
+            'shared_courses': {
                 code: slugs_ for code, slugs_ in sorted(used_by.items())
                 if len(slugs_) > 1
             },
