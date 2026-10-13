@@ -157,7 +157,7 @@ def _evaluate(group, children_by_parent, taken, ctx, inherited=None):
 
     listed = [cr.course for cr in group.course_requirements.all()]
     node['courses'] = [
-        {**course_json(c), 'taken': c.pk in taken} for c in listed
+        {**course_json(c, details=True), 'taken': c.pk in taken} for c in listed
     ]
     filters = list(group.course_filters.all())
     if filters:
@@ -411,7 +411,13 @@ def evaluate_program(program, track_id, taken, get_gened):
 
     statuses = [r['status'] for b in buckets.values() for r in b]
     result = {
-        'program': {'slug': program.slug, 'name': program.name, 'type': program.type},
+        'program': {
+            'slug': program.slug,
+            'name': program.name,
+            'type': program.type,
+            'url': program.url,
+            'requirements_pdf_url': program.requirements_pdf_url,
+        },
         'track': int(track_id) if track_id else None,
         'status': combine(statuses),
         'satisfied': buckets[SATISFIED],

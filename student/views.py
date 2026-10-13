@@ -145,7 +145,7 @@ def requirements(request):
     return JsonResponse(
         {
             'programs': results,
-            'courses': [course_json(c) for c in taken.values()],
+            'courses': [course_json(c, details=True) for c in taken.values()],
             # Only present if some program requires General Education.
             'general_education': gened[0] if requires_gened else None,
             'shared_courses': {

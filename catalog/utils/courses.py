@@ -26,14 +26,20 @@ def normalize_code(code):
     return ' '.join(code.upper().split())
 
 
-def course_json(course):
-    return {
+def course_json(course, details=False):
+    """`details` adds the description, prerequisites and corequisites."""
+    data = {
         'code': course.code,
         'title': course.title,
         'credits': course_credits(course),
         'min_credits': course.min_credits,
         'max_credits': course.max_credits,
     }
+    if details:
+        data['description'] = course.description
+        data['prerequisites'] = course.prerequisites
+        data['corequisites'] = course.corequisites
+    return data
 
 
 def lookup_courses(codes):
