@@ -13,6 +13,40 @@ from catalog.utils.requirements import evaluate_program
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def courses(request):
+    """GET /student/courses/
+
+    Returns the signed-in account's semesters in chronological order, each with
+    the courses taken in it. Classes not yet placed in a semester are listed
+    under `unassigned`.
+    """
+    account = request.user
+    classes = account.classes.select_related('course').order_by('course__prefix_id', 'course__number')
+
+    by_semester = defaultdict(list)
+    for c in classes:
+        by_semester[c.semester_id].append(course_json(c.course))
+
+    return JsonResponse(
+        {
+            'semesters': [
+                {
+                    'id': s.pk,
+                    'term': s.get_term_display(),
+                    'year': s.year,
+                    'credits_attempted': s.credits_attempted,
+                    'credits_earned': s.credits_earned,
+                    'courses': by_semester[s.pk],
+                }
+                for s in account.semesters.order_by('year', 'term')
+            ],
+            'unassigned': by_semester[None],
+        }
+    )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def requirements(request):
     """GET /student/requirements/
 
