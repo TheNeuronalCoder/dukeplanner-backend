@@ -221,12 +221,13 @@ def _added(account, objs, noun):
     )
 
 
-def _delete_owned(request, queryset, noun, field='pk'):
+def _delete_owned(request, queryset, noun, field='pk', delete=None):
     """Deletes every row of `queryset` (already limited to the caller's account)
     whose `field` is in the request body, a non-empty JSON list. If any value
     isn't found, nothing is deleted and they're returned with a 404. If the
     deletion would make the account invalid, nothing is deleted and the new
-    errors are returned with a 409.
+    errors are returned with a 409. `delete`, if given, is called with the
+    matching queryset in place of deleting it directly.
     """
     pks = request.data
     if not isinstance(pks, list) or not pks or not all(isinstance(pk, (int, str)) for pk in pks):
@@ -244,7 +245,7 @@ def _delete_owned(request, queryset, noun, field='pk'):
             status=status.HTTP_404_NOT_FOUND,
         )
 
-    _, rejected = _guarded(request.user, targets.delete)
+    _, rejected = _guarded(request.user, lambda: delete(targets) if delete else targets.delete())
     if rejected:
         return rejected
 
@@ -374,10 +375,22 @@ def delete_courses(request):
     """DELETE /student/courses/delete/ [1, 2, 3]
 
     Deletes the signed-in account's classes with these ids (the `id` of each
-    course in GET /student/courses/). Returns a 409, deleting nothing, if that
-    would make the account invalid.
+    course in GET /student/courses/), along with any semesters left empty,
+    except that the account always keeps at least one semester. Returns a 409,
+    deleting nothing, if that would make the account invalid.
     """
-    return _delete_owned(request, request.user.classes.all(), 'courses')
+    account = request.user
+
+    def delete(classes):
+        semester_ids = set(classes.exclude(semester=None).values_list('semester_id', flat=True))
+        classes.delete()
+        emptied = account.semesters.filter(pk__in=semester_ids, classes=None)
+        if emptied and emptied.count() == account.semesters.count():
+            # Keep the latest so the account isn't left without a semester.
+            emptied = emptied.exclude(pk=emptied.order_by('-year', '-term').first().pk)
+        emptied.delete()
+
+    return _delete_owned(request, account.classes.all(), 'courses', delete=delete)
 
 
 @api_view(['DELETE'])

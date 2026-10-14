@@ -99,3 +99,18 @@ class GuardTests(TestCase):
         self.assertEqual(Class.objects.filter(account=self.account).count(), 1)
 
         self.assertEqual(self.delete('courses/delete', [Class.objects.get().pk]).status_code, 200)
+
+    def test_deleting_last_class_deletes_semester(self):
+        semester = self.set_up_valid()
+        other = Semester.objects.create(account=self.account, term=Semester.Term.SPRING, year=2026)
+        c = Class.objects.create(account=self.account, course=Course.objects.get(), semester=semester, credits=3)
+        Class.objects.create(account=self.account, course=Course.objects.get(), semester=other, credits=3)
+        self.assertEqual(self.delete('courses/delete', [c.pk]).status_code, 200)
+        self.assertFalse(Semester.objects.filter(pk=semester.pk).exists())
+        self.assertTrue(Semester.objects.filter(pk=other.pk).exists())
+
+    def test_deleting_last_class_keeps_only_semester(self):
+        semester = self.set_up_valid()
+        c = Class.objects.create(account=self.account, course=Course.objects.get(), semester=semester, credits=3)
+        self.assertEqual(self.delete('courses/delete', [c.pk]).status_code, 200)
+        self.assertTrue(Semester.objects.filter(pk=semester.pk).exists())
