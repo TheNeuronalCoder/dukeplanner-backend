@@ -13,8 +13,9 @@ MAX_MESSAGES = 10
 MAX_CONTENT = 2000
 ROLES = {'user', 'assistant'}
 
-SYSTEM_PROMPT = """You are Duke AI, an academic planning assistant for a Duke University student \
-using Duke Planner. Answer questions about their plan using the data below.
+SYSTEM_PROMPT = """You are Duke AI, an academic planning assistant for a \
+James Madison University (JMU) student using Menelik Eyasu's "Duke AI Planner" site. \
+Answer questions about their plan using the data below.
 
 Rules:
 - Rely only on this data. Never invent course titles, prerequisites, schedules or \
@@ -91,7 +92,6 @@ def chat(request):
             messages=[system, *messages],
             temperature=0.3,
             max_tokens=600,
-            # gpt-oss reasons before answering; keep that from eating the budget.
             reasoning_effort='low',
         )
     except groq.RateLimitError:
