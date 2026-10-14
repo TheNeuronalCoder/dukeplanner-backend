@@ -6,3 +6,4 @@ whitenoise==6.5.0
 django-cors-headers==4.2.0
 python-dotenv==1.0.0
 PyYAML==6.0.3
+groq==0.31.0

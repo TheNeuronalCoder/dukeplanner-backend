@@ -66,12 +66,17 @@ INSTALLED_APPS = [
     'catalog',
     'account',
     'student',
+    'assistant',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_THROTTLE_RATES': {
+        # Keeps one user from using up the shared Groq free-tier quota.
+        'assistant': '20/min',
+    },
 }
 
 SIMPLE_JWT = {
@@ -93,6 +98,10 @@ EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+
+# Duke AI chat (assistant app), served by Groq's free tier.
+GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')
+GROQ_MODEL = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

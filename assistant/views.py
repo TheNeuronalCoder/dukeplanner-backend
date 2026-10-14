@@ -1,0 +1,108 @@
+import groq
+from django.conf import settings
+from django.http import JsonResponse
+from rest_framework import status
+from rest_framework.decorators import api_view, parser_classes, permission_classes, throttle_classes
+from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.throttling import UserRateThrottle
+
+from .context import build_context
+
+MAX_MESSAGES = 10
+MAX_CONTENT = 2000
+ROLES = {'user', 'assistant'}
+
+SYSTEM_PROMPT = """You are Duke AI, an academic planning assistant for a Duke University student \
+using Duke Planner. Answer questions about their plan using the data below.
+
+Rules:
+- Rely only on this data. Never invent course titles, prerequisites, schedules or \
+requirements it doesn't contain; if it can't answer a question, say so and suggest \
+checking with their advisor or the program's page.
+- Give course codes exactly as written.
+- Reply in plain text with no markdown (no headings, bold, tables or code). Short \
+paragraphs and "- " lists are fine.
+- Keep answers under about 120 words unless asked for more.
+
+The student's plan:
+"""
+
+
+class AssistantThrottle(UserRateThrottle):
+    scope = 'assistant'
+
+
+def _valid_messages(body):
+    """The chat history from the request body, or None if it's malformed."""
+    messages = body.get('messages') if isinstance(body, dict) else None
+    if not isinstance(messages, list) or not messages:
+        return None
+    for m in messages:
+        if (
+            not isinstance(m, dict)
+            or m.get('role') not in ROLES
+            or not isinstance(m.get('content'), str)
+            or not m['content'].strip()
+            or len(m['content']) > MAX_CONTENT
+        ):
+            return None
+    if messages[-1]['role'] != 'user':
+        return None
+    return [{'role': m['role'], 'content': m['content']} for m in messages[-MAX_MESSAGES:]]
+
+
+@api_view(['POST'])
+@parser_classes([JSONParser])
+@permission_classes([IsAuthenticated])
+@throttle_classes([AssistantThrottle])
+def chat(request):
+    """POST /assistant/chat/
+
+    Answers the last message of a chat with Duke AI, which sees a summary of
+    the signed-in account's plan and requirement status (see context.py). The
+    client keeps the history and sends it each time; only the last
+    MAX_MESSAGES are used. It must end with a user message.
+
+    Returns {"reply": "..."}; a 429 if the account or the Groq quota is rate
+    limited, a 502 if Groq fails and a 503 if no API key is configured.
+
+    Sample request body:
+    {"messages": [{"role": "user", "content": "What do I still need for my major?"}]}
+    """
+    messages = _valid_messages(request.data)
+    if messages is None:
+        return JsonResponse(
+            {'error': f'Body must be {{"messages": [...]}}, a non-empty list of '
+                      f'{{"role": "user"|"assistant", "content": "..."}} (at most '
+                      f'{MAX_CONTENT} characters each) ending with a user message.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    if not settings.GROQ_API_KEY:
+        return JsonResponse(
+            {'error': 'Duke AI is not configured.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE
+        )
+
+    system = {'role': 'system', 'content': SYSTEM_PROMPT + build_context(request.user)}
+    client = groq.Groq(api_key=settings.GROQ_API_KEY, timeout=30, max_retries=1)
+    try:
+        completion = client.chat.completions.create(
+            model=settings.GROQ_MODEL,
+            messages=[system, *messages],
+            temperature=0.3,
+            max_tokens=600,
+            # gpt-oss reasons before answering; keep that from eating the budget.
+            reasoning_effort='low',
+        )
+    except groq.RateLimitError:
+        return JsonResponse(
+            {'error': 'Duke AI is busy right now. Try again in a minute.'},
+            status=status.HTTP_429_TOO_MANY_REQUESTS,
+        )
+    except groq.APIError:
+        return JsonResponse(
+            {'error': "Duke AI couldn't answer right now. Try again later."},
+            status=status.HTTP_502_BAD_GATEWAY,
+        )
+
+    return JsonResponse({'reply': completion.choices[0].message.content.strip()})
