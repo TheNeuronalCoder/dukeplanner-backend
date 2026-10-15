@@ -1,5 +1,23 @@
 from django.db import models
 
+
+class Curriculum(models.Model):
+    account = models.ForeignKey('account.Account', on_delete=models.CASCADE, related_name='programs')
+    program = models.ForeignKey('catalog.Program', on_delete=models.PROTECT, related_name='account_programs')
+    # Null when the program has no tracks or one hasn't been chosen yet.
+    track = models.ForeignKey(
+        'catalog.Track', on_delete=models.PROTECT, null=True, blank=True, related_name='account_programs'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['account', 'program'], name='unique_program_per_account'),
+        ]
+
+    def __str__(self):
+        return f'{self.account} - {self.program}'
+
+
 class Semester(models.Model):
     # Integer values so semesters within a year sort chronologically.
     class Term(models.IntegerChoices):
@@ -40,20 +58,3 @@ class Class(models.Model):
 
     def __str__(self):
         return f'{self.account} - {self.course.code}'
-
-
-class Curriculum(models.Model):
-    account = models.ForeignKey('account.Account', on_delete=models.CASCADE, related_name='programs')
-    program = models.ForeignKey('catalog.Program', on_delete=models.PROTECT, related_name='account_programs')
-    # Null when the program has no tracks or one hasn't been chosen yet.
-    track = models.ForeignKey(
-        'catalog.Track', on_delete=models.PROTECT, null=True, blank=True, related_name='account_programs'
-    )
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['account', 'program'], name='unique_program_per_account'),
-        ]
-
-    def __str__(self):
-        return f'{self.account} - {self.program}'

@@ -401,6 +401,7 @@ def check_classes(account_id, classes, config: Config) -> list[Issue]:
                 f'{c.course.code} in {c.semester} has {c.credits} credits, outside its '
                 f'{c.course.min_credits}-{c.course.max_credits} credit range.',
                 obj=c,
+                severity=Severity.WARNING
             ))
         key = (c.semester_id, c.course_id)
         if key in seen:

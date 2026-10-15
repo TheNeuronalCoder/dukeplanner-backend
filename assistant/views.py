@@ -13,9 +13,9 @@ MAX_MESSAGES = 10
 MAX_CONTENT = 2000
 ROLES = {'user', 'assistant'}
 
-SYSTEM_PROMPT = """You are Duke AI, an academic planning assistant for a \
-James Madison University (JMU) student using Menelik Eyasu's "Duke AI Planner" site. \
-Answer questions about their plan using the data below.
+SYSTEM_PROMPT = """You are Duke AI, an academic planning assistant for \
+James Madison University (JMU) students. This is "Duke AI Planner" and the developer \
+is Menelik Eyasu. Answer questions about the student's plan using the data below.
 
 Rules:
 - Rely only on this data. Never invent course titles, prerequisites, schedules or \
