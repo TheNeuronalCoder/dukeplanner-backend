@@ -10,7 +10,7 @@ from account.validation import errors, validate_account
 from catalog.utils import gened as gen_ed
 from catalog.utils.courses import course_json
 from catalog.utils.requirements import bucket, evaluate_program, requirements_of
-from catalog.utils.status import IN_PROGRESS, SATISFIED, combine
+from catalog.utils.status import IN_PROGRESS, PLANNED, SATISFIED, combine
 from .models import Semester
 
 
@@ -109,35 +109,38 @@ def _evaluate(curricula, taken):
     }
 
 
-def _mark_in_progress(node, done):
-    """Changes every `status` in `node` (an evaluation counting the classes in
-    progress) that is satisfied there but not in `done` (the same evaluation
-    with completed classes only) to IN_PROGRESS. Lists are matched up by `id`
-    if their items have one, otherwise by position.
+def _mark(node, earlier, status):
+    """Changes every `status` in `node` (an evaluation) that is satisfied there
+    but not in `earlier` (the same evaluation counting fewer classes) to
+    `status`. Lists are matched up by `id` if their items have one, otherwise
+    by position.
     """
-    if isinstance(node, dict) and isinstance(done, dict):
-        if node.get('status') == SATISFIED and done.get('status') != SATISFIED:
-            node['status'] = IN_PROGRESS
+    if isinstance(node, dict) and isinstance(earlier, dict):
+        if node.get('status') == SATISFIED and earlier.get('status') != SATISFIED:
+            node['status'] = status
         for key, value in node.items():
-            if key in done:
-                _mark_in_progress(value, done[key])
-    elif isinstance(node, list) and isinstance(done, list):
-        if all(isinstance(x, dict) and 'id' in x for x in node + done):
-            done_by_id = {x['id']: x for x in done}
-            pairs = [(x, done_by_id.get(x['id'])) for x in node]
+            if key in earlier:
+                _mark(value, earlier[key], status)
+    elif isinstance(node, list) and isinstance(earlier, list):
+        if all(isinstance(x, dict) and 'id' in x for x in node + earlier):
+            earlier_by_id = {x['id']: x for x in earlier}
+            pairs = [(x, earlier_by_id.get(x['id'])) for x in node]
         else:
-            pairs = zip(node, done) if len(node) == len(done) else []
-        for x, d in pairs:
-            _mark_in_progress(x, d)
+            pairs = zip(node, earlier) if len(node) == len(earlier) else []
+        for x, e in pairs:
+            _mark(x, e, status)
 
 
-def _merge_program(program, done):
-    """Marks `program` (see _mark_in_progress) and re-buckets its requirements."""
-    requirements = requirements_of(program)
-    _mark_in_progress(requirements, requirements_of(done))
-    _mark_in_progress(program['degree_requirements'], done['degree_requirements'])
-    program.update(bucket(requirements))
-    program['status'] = combine([r['status'] for r in requirements])
+def _mark_data(data, earlier, status):
+    """_mark for a whole _evaluate result, re-bucketing each program's
+    requirements."""
+    for program, earlier_program in zip(data['programs'], earlier['programs']):
+        requirements = requirements_of(program)
+        _mark(requirements, requirements_of(earlier_program), status)
+        _mark(program['degree_requirements'], earlier_program['degree_requirements'], status)
+        program.update(bucket(requirements))
+        program['status'] = combine([r['status'] for r in requirements])
+    _mark(data['general_education'], earlier['general_education'], status)
 
 
 def requirements_data(account, current_semester):
@@ -145,9 +148,9 @@ def requirements_data(account, current_semester):
 
     `current_semester` is the semester in progress as TERM_YEAR (e.g.
     "FALL_2026"). Passed classes of earlier semesters, and ones not placed in a
-    semester, count as completed. A requirement that only the classes of the
-    current semester would meet is "in progress". Classes of later semesters
-    don't count.
+    semester, count as completed. A requirement that the classes of the
+    current semester would also need to meet is "in progress", and one that
+    classes of later semesters would also need to meet is "planned".
 
     Returns (data, None), or (None, issues) with the account's ERROR-level
     validation issues if it isn't set up and valid.
@@ -160,26 +163,28 @@ def requirements_data(account, current_semester):
     curricula = list(account.programs.select_related('program').order_by('pk'))
     # In the order taken (classes not placed in a semester first), each course
     # once, as first taken, so requirements show the class that met them first.
-    taken, completed = {}, {}
+    taken, through_current, completed = {}, {}, {}
     # Failed classes don't count toward any requirement.
     classes = account.classes.filter(credits_earned=True).select_related('course', 'semester').order_by(
         F('semester__year').asc(nulls_first=True), 'semester__term', 'pk'
     )
     for c in classes:
-        status = 'completed' if c.semester is None else _status(c.semester.year, c.semester.term, current)
-        if status == 'planned' or c.course.pk in taken:
+        if c.course.pk in taken:
             continue
+        status = 'completed' if c.semester is None else _status(c.semester.year, c.semester.term, current)
         # Count the credits the student took, which can differ from the catalog's
         # for variable-credit courses (course_credits reads `credits` first).
         c.course.credits = c.credits
         taken[c.course.pk] = c.course
+        if status != 'planned':
+            through_current[c.course.pk] = c.course
         if status == 'completed':
             completed[c.course.pk] = c.course
 
     data = _evaluate(curricula, taken)
-    if len(completed) < len(taken):
-        done = _evaluate(curricula, completed)
-        for program, done_program in zip(data['programs'], done['programs']):
-            _merge_program(program, done_program)
-        _mark_in_progress(data['general_education'], done['general_education'])
+    # Planned first: what's still satisfied after is met by this semester.
+    if len(through_current) < len(taken):
+        _mark_data(data, _evaluate(curricula, through_current), PLANNED)
+    if len(completed) < len(through_current):
+        _mark_data(data, _evaluate(curricula, completed), IN_PROGRESS)
     return data, None

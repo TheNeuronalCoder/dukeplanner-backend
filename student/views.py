@@ -88,8 +88,8 @@ def requirements(request):
     `programs` holds one entry per program, in the order they were added, each
     with its requirements bucketed by status: "satisfied" by passed classes of
     completed semesters (or ones not placed in a semester), "in progress" if the
-    classes of the CURRENT_SEMESTER would satisfy them once passed, otherwise
-    "unsatisfied" or "unverified". Classes of planned semesters don't count.
+    classes of the CURRENT_SEMESTER would satisfy them once passed, "planned" if
+    classes of later semesters would, otherwise "unsatisfied" or "unverified".
     `degree_requirements` holds the
     B.A./B.S. requirements (philosophy, foreign language, quantitative, scientific
     literacy) the program's placeholders name. University electives are the taken

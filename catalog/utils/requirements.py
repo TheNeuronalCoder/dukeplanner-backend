@@ -13,7 +13,7 @@ from ..models import (
 from . import degree_reqs
 from . import gened as gen_ed
 from .courses import course_credits, course_json, course_number
-from .status import IN_PROGRESS, SATISFIED, UNSATISFIED, UNVERIFIED, combine
+from .status import IN_PROGRESS, PLANNED, SATISFIED, UNSATISFIED, UNVERIFIED, combine
 
 # "Electives", "University electives", "University Elective(s)", ...
 ELECTIVES_RE = re.compile(r'\s*(university\s+)?electives?(\(s\))?\s*', re.IGNORECASE)
@@ -37,6 +37,7 @@ INFORMATIONAL_SECTION_RE = re.compile(r'substitution|sample curriculum', re.IGNO
 BUCKETS = {
     SATISFIED: 'satisfied',
     IN_PROGRESS: 'in_progress',
+    PLANNED: 'planned',
     UNSATISFIED: 'unsatisfied',
     UNVERIFIED: 'unverified',
 }

@@ -6,7 +6,7 @@ than sending the JSON the student views return.
 
 from django.conf import settings
 
-from catalog.utils.status import IN_PROGRESS, SATISFIED, UNSATISFIED
+from catalog.utils.status import IN_PROGRESS, PLANNED, SATISFIED, UNSATISFIED
 from student.summary import requirements_data, semesters_data
 
 MAX_CHARS = 4000
@@ -28,7 +28,7 @@ def _codes(codes, limit=MAX_OPTIONS):
 
 def _open_rules(node, depth=0):
     """Lines describing the unmet parts of a requirement tree."""
-    if depth > MAX_DEPTH or node.get('status') in (SATISFIED, IN_PROGRESS, None):
+    if depth > MAX_DEPTH or node.get('status') in (SATISFIED, IN_PROGRESS, PLANNED, None):
         return []
     indent = '  ' * (depth + 2)
     line = node.get('text') or ''
@@ -77,7 +77,7 @@ def _requirements(account):
         prog = p['program']
         lines.append(f'Program: {prog["name"]} ({prog["type"]}), overall {p["status"]}')
         lines.append(f'  Satisfied: {", ".join(r["title"] for r in p["satisfied"]) or "none"}')
-        for bucket in ('in_progress', 'unsatisfied', 'unverified'):
+        for bucket in ('in_progress', 'planned', 'unsatisfied', 'unverified'):
             for r in p[bucket]:
                 lines.append(f'  {bucket.replace("_", " ").upper()}: {r["title"]}')
                 if bucket == 'unsatisfied':
