@@ -402,10 +402,16 @@ def check_classes(account_id, classes, config: Config) -> list[Issue]:
                 obj=c,
             ))
         if not (c.course.min_credits <= c.credits <= c.course.max_credits):
+            cr = 'credit' if c.credits == 1 else 'credits'
+            official_range = (
+                f'{c.course.min_credits}-{c.course.max_credits} credits'
+                if c.course.credits is None else f'{c.course.credits} credit'
+                if c.course.credits == 1 else f'{c.course.credits} credits'
+            )
             issues.append(Issue(
                 'class_credits_out_of_range',
-                f'{c.course.code} in {c.semester} has {c.credits} credits, outside its '
-                f'{c.course.min_credits}-{c.course.max_credits} credit range.',
+                f'{c.course.code} in {c.semester} is {c.credits} {cr}, outside the '
+                f'official {official_range} in the JMU catalog.',
                 obj=c,
                 severity=Severity.WARNING
             ))
