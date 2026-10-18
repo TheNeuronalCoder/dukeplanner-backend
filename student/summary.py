@@ -18,11 +18,15 @@ def semesters_data(account):
 
     by_semester = defaultdict(list)
     for c in classes:
-        # `id` is the Class pk, used by PATCH and DELETE /student/courses/.
+        course = c.course
         by_semester[c.semester_id].append({
             'id': c.pk,
-            **course_json(c.course, details=True),
+            **course_json(course, details=True),
             'credits': c.credits,
+            'official_credits': (
+                course.credits if course.credits is not None
+                else [course.min_credits, course.max_credits]
+            ),
             'credits_earned': c.credits_earned,
         })
 
