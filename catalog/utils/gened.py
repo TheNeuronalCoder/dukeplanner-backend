@@ -83,40 +83,58 @@ def _assign(areas, candidates, exclusive):
 
 
 def evaluate(taken):
-    """Evaluate Gen Ed against `taken` (a dict of pk -> Course).
+    """Evaluate Gen Ed against `taken` (a dict of pk -> Course, in the order
+    taken). Earlier courses are preferred, and an area's `satisfied_by` lists
+    the courses counted toward it followed by its other taken options no area
+    of the cluster counts, all in the order taken.
 
     Returns (json, courses_used) where courses_used are the Course objects counted
-    toward Gen Ed.
+    toward Gen Ed (not the extra options).
     """
     data = load()
     taken_by_code = {normalize_code(c.code): c for c in taken.values()}
+    order = {code: i for i, code in enumerate(taken_by_code)}
 
     clusters = []
     all_used = []
     for cluster in data['clusters']:
         areas = cluster['areas']
         candidates = [
-            [
-                code
-                for code in (normalize_code(c['code']) for c in area['courses'])
-                if code in taken_by_code
-            ]
+            sorted(
+                {
+                    code
+                    for code in (normalize_code(c['code']) for c in area['courses'])
+                    if code in taken_by_code
+                },
+                key=order.get,
+            )
             for area in areas
         ]
         chosen = _assign(areas, candidates, cluster.get('exclusive', []))
         used_codes = {code for combo in chosen for code in combo}
+        # Taken options no area counts, listed under the first area they fit.
+        extras = [[] for _ in areas]
+        listed = set(used_codes)
+        for i, cands in enumerate(candidates):
+            for code in cands:
+                if code not in listed:
+                    extras[i].append(code)
+                    listed.add(code)
 
         # Courses with an embedded lab also satisfy a "lab experience" area.
         embedded_labs = sorted(
-            normalize_code(c['code'])
-            for area in areas
-            for c in area['courses']
-            if c.get('includes_lab') and normalize_code(c['code']) in used_codes
+            {
+                normalize_code(c['code'])
+                for area in areas
+                for c in area['courses']
+                if c.get('includes_lab') and normalize_code(c['code']) in used_codes
+            },
+            key=order.get,
         )
 
         area_nodes = []
-        for area, combo in zip(areas, chosen):
-            satisfied_by = sorted(combo)
+        for area, combo, extra in zip(areas, chosen, extras):
+            satisfied_by = sorted(combo, key=order.get) + extra
             status = SATISFIED if len(combo) >= area['choose'] else UNSATISFIED
             if status == UNSATISFIED and area.get('satisfied_by_embedded_lab') and embedded_labs:
                 status = SATISFIED

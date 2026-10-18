@@ -3,7 +3,7 @@ the assistant."""
 
 from collections import defaultdict
 
-from django.db.models import Q, Sum
+from django.db.models import F, Q, Sum
 from django.db.models.functions import Coalesce
 
 from account.validation import errors, validate_account
@@ -158,19 +158,26 @@ def requirements_data(account, current_semester):
 
     current = _semester_key(current_semester)
     curricula = list(account.programs.select_related('program').order_by('pk'))
-    completed, in_progress = {}, {}
+    # In the order taken (classes not placed in a semester first), each course
+    # once, as first taken, so requirements show the class that met them first.
+    taken, completed = {}, {}
     # Failed classes don't count toward any requirement.
-    for c in account.classes.filter(credits_earned=True).select_related('course', 'semester'):
+    classes = account.classes.filter(credits_earned=True).select_related('course', 'semester').order_by(
+        F('semester__year').asc(nulls_first=True), 'semester__term', 'pk'
+    )
+    for c in classes:
         status = 'completed' if c.semester is None else _status(c.semester.year, c.semester.term, current)
-        if status == 'planned':
+        if status == 'planned' or c.course.pk in taken:
             continue
         # Count the credits the student took, which can differ from the catalog's
         # for variable-credit courses (course_credits reads `credits` first).
         c.course.credits = c.credits
-        (completed if status == 'completed' else in_progress)[c.course.pk] = c.course
+        taken[c.course.pk] = c.course
+        if status == 'completed':
+            completed[c.course.pk] = c.course
 
-    data = _evaluate(curricula, {**in_progress, **completed})
-    if in_progress:
+    data = _evaluate(curricula, taken)
+    if len(completed) < len(taken):
         done = _evaluate(curricula, completed)
         for program, done_program in zip(data['programs'], done['programs']):
             _merge_program(program, done_program)

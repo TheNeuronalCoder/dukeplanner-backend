@@ -213,10 +213,12 @@ def _evaluate_placeholder(group, node, ctx):
         gened_json, gened_used = gened
         cluster = next(c for c in gened_json['clusters'] if c['id'] == cluster_id)
         codes = {code for a in cluster['areas'] for code in a['satisfied_by']}
+        # Only the courses counted toward the cluster, not its areas' extra options.
+        used = [c for c in gened_used if c.code in codes]
         node['general_education'] = cluster_id
         node['status'] = cluster['status']
-        node['satisfied_by'] = sorted(codes)
-        return node, [c for c in gened_used if c.code in codes]
+        node['satisfied_by'] = sorted(c.code for c in used)
+        return node, used
 
     degree_id = _degree_requirement_id(group)
     if degree_id in ctx['degree']:
