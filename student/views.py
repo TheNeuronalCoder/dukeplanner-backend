@@ -86,7 +86,11 @@ def requirements(request):
     specific to that track are returned.
 
     `programs` holds one entry per program, in the order they were added, each
-    with its requirements bucketed by status. `degree_requirements` holds the
+    with its requirements bucketed by status: "satisfied" by passed classes of
+    completed semesters (or ones not placed in a semester), "in progress" if the
+    classes of the CURRENT_SEMESTER would satisfy them once passed, otherwise
+    "unsatisfied" or "unverified". Classes of planned semesters don't count.
+    `degree_requirements` holds the
     B.A./B.S. requirements (philosophy, foreign language, quantitative, scientific
     literacy) the program's placeholders name. University electives are the taken
     courses no other requirement of that program counts. Placeholders like "Major
@@ -111,7 +115,7 @@ def requirements(request):
     set up and valid (see account.validation).
     """
     classes = semesters_data(request.user, settings.CURRENT_SEMESTER)
-    data, issues = requirements_data(request.user)
+    data, issues = requirements_data(request.user, settings.CURRENT_SEMESTER)
     if issues:
         return JsonResponse(
             {

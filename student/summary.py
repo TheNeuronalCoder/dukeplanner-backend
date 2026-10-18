@@ -9,7 +9,8 @@ from django.db.models.functions import Coalesce
 from account.validation import errors, validate_account
 from catalog.utils import gened as gen_ed
 from catalog.utils.courses import course_json
-from catalog.utils.requirements import evaluate_program
+from catalog.utils.requirements import bucket, evaluate_program, requirements_of
+from catalog.utils.status import IN_PROGRESS, SATISFIED, combine
 from .models import Semester
 
 
@@ -73,25 +74,9 @@ def semesters_data(account, current_semester):
     }
 
 
-def requirements_data(account):
-    """The body of GET /student/requirements/ (see student.views.requirements).
-
-    Returns (data, None), or (None, issues) with the account's ERROR-level
-    validation issues if it isn't set up and valid.
-    """
-    issues = errors(validate_account(account))
-    if issues:
-        return None, issues
-
-    curricula = account.programs.select_related('program').order_by('pk')
-    taken = {}
-    # Failed classes don't count toward any requirement.
-    for c in account.classes.filter(credits_earned=True).select_related('course'):
-        # Count the credits the student took, which can differ from the catalog's
-        # for variable-credit courses (course_credits reads `credits` first).
-        c.course.credits = c.credits
-        taken[c.course.pk] = c.course
-
+def _evaluate(curricula, taken):
+    """Evaluates the account's programs and General Education against `taken`
+    (a dict of pk -> Course)."""
     gened = None
 
     def get_gened():
@@ -121,4 +106,73 @@ def requirements_data(account):
             code: slugs for code, slugs in sorted(used_by.items())
             if len(slugs) > 1
         },
-    }, None
+    }
+
+
+def _mark_in_progress(node, done):
+    """Changes every `status` in `node` (an evaluation counting the classes in
+    progress) that is satisfied there but not in `done` (the same evaluation
+    with completed classes only) to IN_PROGRESS. Lists are matched up by `id`
+    if their items have one, otherwise by position.
+    """
+    if isinstance(node, dict) and isinstance(done, dict):
+        if node.get('status') == SATISFIED and done.get('status') != SATISFIED:
+            node['status'] = IN_PROGRESS
+        for key, value in node.items():
+            if key in done:
+                _mark_in_progress(value, done[key])
+    elif isinstance(node, list) and isinstance(done, list):
+        if all(isinstance(x, dict) and 'id' in x for x in node + done):
+            done_by_id = {x['id']: x for x in done}
+            pairs = [(x, done_by_id.get(x['id'])) for x in node]
+        else:
+            pairs = zip(node, done) if len(node) == len(done) else []
+        for x, d in pairs:
+            _mark_in_progress(x, d)
+
+
+def _merge_program(program, done):
+    """Marks `program` (see _mark_in_progress) and re-buckets its requirements."""
+    requirements = requirements_of(program)
+    _mark_in_progress(requirements, requirements_of(done))
+    _mark_in_progress(program['degree_requirements'], done['degree_requirements'])
+    program.update(bucket(requirements))
+    program['status'] = combine([r['status'] for r in requirements])
+
+
+def requirements_data(account, current_semester):
+    """The body of GET /student/requirements/ (see student.views.requirements).
+
+    `current_semester` is the semester in progress as TERM_YEAR (e.g.
+    "FALL_2026"). Passed classes of earlier semesters, and ones not placed in a
+    semester, count as completed. A requirement that only the classes of the
+    current semester would meet is "in progress". Classes of later semesters
+    don't count.
+
+    Returns (data, None), or (None, issues) with the account's ERROR-level
+    validation issues if it isn't set up and valid.
+    """
+    issues = errors(validate_account(account))
+    if issues:
+        return None, issues
+
+    current = _semester_key(current_semester)
+    curricula = list(account.programs.select_related('program').order_by('pk'))
+    completed, in_progress = {}, {}
+    # Failed classes don't count toward any requirement.
+    for c in account.classes.filter(credits_earned=True).select_related('course', 'semester'):
+        status = 'completed' if c.semester is None else _status(c.semester.year, c.semester.term, current)
+        if status == 'planned':
+            continue
+        # Count the credits the student took, which can differ from the catalog's
+        # for variable-credit courses (course_credits reads `credits` first).
+        c.course.credits = c.credits
+        (completed if status == 'completed' else in_progress)[c.course.pk] = c.course
+
+    data = _evaluate(curricula, {**in_progress, **completed})
+    if in_progress:
+        done = _evaluate(curricula, completed)
+        for program, done_program in zip(data['programs'], done['programs']):
+            _merge_program(program, done_program)
+        _mark_in_progress(data['general_education'], done['general_education'])
+    return data, None

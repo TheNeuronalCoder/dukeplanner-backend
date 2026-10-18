@@ -13,7 +13,7 @@ from ..models import (
 from . import degree_reqs
 from . import gened as gen_ed
 from .courses import course_credits, course_json, course_number
-from .status import SATISFIED, UNSATISFIED, UNVERIFIED, combine
+from .status import IN_PROGRESS, SATISFIED, UNSATISFIED, UNVERIFIED, combine
 
 # "Electives", "University electives", "University Elective(s)", ...
 ELECTIVES_RE = re.compile(r'\s*(university\s+)?electives?(\(s\))?\s*', re.IGNORECASE)
@@ -32,6 +32,14 @@ SECTION_REFERENCE_RE = re.compile(
 NOT_SECTION_REFERENCE_RE = re.compile(r'^\s*(credit|experiential)\b', re.IGNORECASE)
 # Sections that are informational rather than requirements.
 INFORMATIONAL_SECTION_RE = re.compile(r'substitution|sample curriculum', re.IGNORECASE)
+
+# The key each status's requirements are listed under in a program's result.
+BUCKETS = {
+    SATISFIED: 'satisfied',
+    IN_PROGRESS: 'in_progress',
+    UNSATISFIED: 'unsatisfied',
+    UNVERIFIED: 'unverified',
+}
 
 Kind = RequirementGroup.Kind
 EachUnit = RequirementGroup.EachUnit
@@ -300,6 +308,19 @@ def _program_codes(node, codes):
     return codes
 
 
+def bucket(requirements):
+    """{bucket key: requirements with that status}, see BUCKETS."""
+    buckets = {key: [] for key in BUCKETS.values()}
+    for r in requirements:
+        buckets[BUCKETS[r['status']]].append(r)
+    return buckets
+
+
+def requirements_of(result):
+    """Every requirement of an evaluated program, in catalog order."""
+    return sorted((r for key in BUCKETS.values() for r in result[key]), key=lambda r: r['id'])
+
+
 def evaluate_program(program, track_id, taken, get_gened):
     """Evaluate one program's requirements against the taken courses.
 
@@ -387,7 +408,7 @@ def evaluate_program(program, track_id, taken, get_gened):
         ctx['electives'] = electives
     trees = evaluate_all(ctx)
 
-    buckets = {SATISFIED: [], UNSATISFIED: [], UNVERIFIED: []}
+    requirements = []
     program_codes = set()
     for req in reqs:
         tree = trees[req.pk]
@@ -395,7 +416,7 @@ def evaluate_program(program, track_id, taken, get_gened):
             _program_codes(tree, program_codes)
         # A requirement that is only a note has nothing to check.
         status = tree['status'] or SATISFIED
-        buckets[status].append(
+        requirements.append(
             {
                 'id': req.pk,
                 'title': req.title,
@@ -409,7 +430,6 @@ def evaluate_program(program, track_id, taken, get_gened):
             }
         )
 
-    statuses = [r['status'] for b in buckets.values() for r in b]
     result = {
         'program': {
             'slug': program.slug,
@@ -419,10 +439,8 @@ def evaluate_program(program, track_id, taken, get_gened):
             'requirements_pdf_url': program.requirements_pdf_url,
         },
         'track': int(track_id) if track_id else None,
-        'status': combine(statuses),
-        'satisfied': buckets[SATISFIED],
-        'unsatisfied': buckets[UNSATISFIED],
-        'unverified': buckets[UNVERIFIED],
+        'status': combine([r['status'] for r in requirements]),
+        **bucket(requirements),
         # Only present for B.A./B.S. programs.
         'degree_requirements': [j for j, _ in degree.values()] if degree else None,
         # Only present for programs with a University electives requirement.
