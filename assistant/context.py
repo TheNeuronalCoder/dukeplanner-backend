@@ -4,6 +4,8 @@ Groq's free tier limits tokens per minute, so this summarizes the plan rather
 than sending the JSON the student views return.
 """
 
+from django.conf import settings
+
 from catalog.utils.status import SATISFIED, UNSATISFIED
 from student.summary import requirements_data, semesters_data
 
@@ -46,7 +48,7 @@ def _open_rules(node, depth=0):
 
 
 def _semesters(account):
-    data = semesters_data(account)
+    data = semesters_data(account, settings.CURRENT_SEMESTER)
     lines = ['Semesters:']
     for s in data['semesters']:
         courses = [

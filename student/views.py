@@ -1,5 +1,6 @@
 from collections import Counter
 
+from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
 from rest_framework import status
@@ -103,12 +104,13 @@ def requirements(request):
     and DELETE /student/courses/), and its `credits` and `credits_earned` (false
     if failed) are the student's; a semester's `credits_attempted` sums its
     classes' credits and `credits_earned` sums those of the classes that were
-    passed.
+    passed. A semester's `status` is "completed", "in progress" or "planned"
+    relative to the CURRENT_SEMESTER setting.
 
     Returns a 409 with the ERROR-level issues and `classes` if the account isn't
     set up and valid (see account.validation).
     """
-    classes = semesters_data(request.user)
+    classes = semesters_data(request.user, settings.CURRENT_SEMESTER)
     data, issues = requirements_data(request.user)
     if issues:
         return JsonResponse(

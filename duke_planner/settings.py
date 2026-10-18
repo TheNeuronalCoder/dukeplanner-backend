@@ -102,6 +102,10 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
 GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')
 GROQ_MODEL = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')
 
+# The semester in progress, as TERM_YEAR (e.g. FALL_2026), which sets each
+# semester's status in GET /student/requirements/.
+CURRENT_SEMESTER = os.getenv('CURRENT_SEMESTER')
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',

@@ -10,10 +10,31 @@ from account.validation import errors, validate_account
 from catalog.utils import gened as gen_ed
 from catalog.utils.courses import course_json
 from catalog.utils.requirements import evaluate_program
+from .models import Semester
 
 
-def semesters_data(account):
-    """The `classes` of GET /student/requirements/ (see student.views.requirements)."""
+def _semester_key(semester):
+    """(year, Semester.Term) for a TERM_YEAR string like "FALL_2026"."""
+    term, _, year = semester.partition('_')
+    return int(year), Semester.Term[term.upper()]
+
+
+def _status(year, term, current):
+    key = (year, term)
+    if key < current:
+        return 'completed'
+    if key == current:
+        return 'in progress'
+    return 'planned'
+
+
+def semesters_data(account, current_semester):
+    """The `classes` of GET /student/requirements/ (see student.views.requirements).
+
+    `current_semester` is the semester in progress as TERM_YEAR (e.g.
+    "FALL_2026"), which sets each semester's `status`.
+    """
+    current = _semester_key(current_semester)
     classes = account.classes.select_related('course').order_by('course__prefix_id', 'course__number')
 
     by_semester = defaultdict(list)
@@ -41,6 +62,7 @@ def semesters_data(account):
                 'id': s.pk,
                 'term': s.get_term_display(),
                 'year': s.year,
+                'status': _status(s.year, s.term, current),
                 'credits_attempted': s.attempted,
                 'credits_earned': s.earned,
                 'courses': by_semester[s.pk],
