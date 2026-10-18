@@ -142,7 +142,15 @@ class GuardTests(TestCase):
         c.refresh_from_db()
         self.assertEqual((c.course.code, c.credits, c.credits_earned), ('CS 159', 3, False))
 
-        self.assertEqual(self.patch('courses', [{'id': c.pk, 'credits': 9}]).status_code, 400)
+        # Credits outside the catalog's range are kept (the catalog may have changed
+        # since the class was taken), but must be 1-9.
+        self.assertEqual(self.patch('courses', [{'id': c.pk, 'credits': 9}]).status_code, 200)
+        c.refresh_from_db()
+        self.assertEqual(c.credits, 9)
+        for credits in (0, 10):
+            r = self.patch('courses', [{'id': c.pk, 'credits': credits}])
+            self.assertEqual(r.status_code, 400)
+            self.assertEqual(r.json(), [{'credits': ['Credits must be between 1 and 9.']}])
         # Duplicates in a semester are rejected by validation.
         r = self.patch('courses', [{'id': c.pk, 'course': 'CS 149'}])
         self.assertEqual(r.status_code, 409)

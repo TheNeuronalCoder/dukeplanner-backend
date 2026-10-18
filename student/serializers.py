@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
-from account.serializers import ClassEntryField, ClassSerializer, CourseField
+from account.serializers import ClassEntryField, ClassSerializer, CourseField, credits_field
 from catalog.models import Program, Track
-from catalog.utils.courses import course_credits, credits_range_error
+from catalog.utils.courses import course_credits
 
 from .models import Class, Semester
 
@@ -34,17 +34,12 @@ class UpdateCourseSerializer(serializers.Serializer):
     id = OwnedClassField()
     course = CourseField(required=False)
     semester = OwnedSemesterField(required=False)
-    credits = serializers.IntegerField(required=False, min_value=0)
+    credits = credits_field()
     credits_earned = serializers.BooleanField(required=False)
 
     def validate(self, data):
-        cls = data['id']
         if 'course' in data:
             data.setdefault('credits', course_credits(data['course']))
-        if 'credits' in data:
-            error = credits_range_error(data.get('course', cls.course), data['credits'])
-            if error:
-                raise serializers.ValidationError({'credits': error})
         return data
 
 

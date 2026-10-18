@@ -1,4 +1,10 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+# Bounds on a class's credits. The catalog's range isn't enforced, since a
+# course's credits can change after a student took it.
+MIN_CLASS_CREDITS = 1
+MAX_CLASS_CREDITS = 9
 
 
 class Curriculum(models.Model):
@@ -48,13 +54,22 @@ class Class(models.Model):
     semester = models.ForeignKey(
         Semester, on_delete=models.CASCADE, null=True, blank=True, related_name='classes'
     )
-    # Within the course's min_credits..max_credits (variable-credit courses vary per student).
-    credits = models.PositiveSmallIntegerField()
+    # The credits the student took the class for, which can differ from the course's
+    # current catalog credits (variable-credit courses, or the catalog changed since).
+    credits = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(MIN_CLASS_CREDITS), MaxValueValidator(MAX_CLASS_CREDITS)]
+    )
     # False when the class was failed, so its credits are attempted but not earned.
     credits_earned = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = 'classes'
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(credits__gte=MIN_CLASS_CREDITS, credits__lte=MAX_CLASS_CREDITS),
+                name='class_credits_in_range',
+            ),
+        ]
 
     def __str__(self):
         return f'{self.account} - {self.course.code}'

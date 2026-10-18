@@ -249,15 +249,27 @@ class SetupTests(APITestCase):
 
         self.assertEqual(self.account.classes.get().credits, 1)
 
-    def test_rejects_credits_outside_range(self):
-        for course, credits in [('CS 499', 7), ('CS 499', 0), ('CS 149', 4)]:
+    def test_rejects_credits_outside_1_to_9(self):
+        for course, credits in [('CS 499', 0), ('CS 149', 10)]:
             response = self.setup(self.body(semesters=[
                 {'term': 'fall', 'year': 2025, 'courses': [{'course': course, 'credits': credits}]},
             ]))
 
             self.assertEqual(response.status_code, 400, (course, credits))
-            self.assertIn('credits', response.json()['semesters'][0]['courses']['0'])
+            self.assertEqual(
+                response.json()['semesters'][0]['courses']['0'],
+                {'credits': ['Credits must be between 1 and 9.']},
+            )
         self.assertFalse(self.account.classes.exists())
+
+    def test_keeps_credits_outside_catalog_range(self):
+        # The catalog may have changed since the class was taken (CS 149 is 3 credits now).
+        response = self.setup(self.body(semesters=[
+            {'term': 'fall', 'year': 2025, 'courses': [{'course': 'CS 149', 'credits': 4}]},
+        ]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.account.classes.get().credits, 4)
 
     def test_failed_classes_dont_count_toward_requirements(self):
         self.setup(self.body(semesters=[{'term': 'fall', 'year': 2025, 'courses': [

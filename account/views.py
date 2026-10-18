@@ -158,7 +158,7 @@ def setup(request):
     }
 
     Each course is an object with `course`, optional `credits` (defaults to the
-    course's credits; must be within its min/max range) and optional
+    course's credits; must be 1-9, but needn't match the catalog) and optional
     `credits_earned` (false if failed; defaults to true). A bare course code is
     also accepted, meaning the defaults.
     """

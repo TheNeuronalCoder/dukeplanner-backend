@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from catalog.models import Course, Program
-from catalog.utils.courses import course_credits, credits_range_error
-from student.models import Semester
+from catalog.utils.courses import course_credits
+from student.models import MAX_CLASS_CREDITS, MIN_CLASS_CREDITS, Semester
 
 
 class CourseField(serializers.CharField):
@@ -16,20 +16,26 @@ class CourseField(serializers.CharField):
         return course
 
 
+def credits_field():
+    """The credits a class was taken for: 1-9, but not checked against the catalog,
+    since a course's credits can change after a student took it."""
+    message = f'Credits must be between {MIN_CLASS_CREDITS} and {MAX_CLASS_CREDITS}.'
+    return serializers.IntegerField(
+        required=False, min_value=MIN_CLASS_CREDITS, max_value=MAX_CLASS_CREDITS,
+        error_messages={'min_value': message, 'max_value': message},
+    )
+
+
 class ClassSerializer(serializers.Serializer):
     """A class taken: the course, the credits taken for it (defaults to the course's
-    credits, and must be within its range) and whether they were earned (passed)."""
+    credits; see credits_field) and whether they were earned (passed)."""
 
     course = CourseField()
-    credits = serializers.IntegerField(required=False, min_value=0)
+    credits = credits_field()
     credits_earned = serializers.BooleanField(default=True)
 
     def validate(self, data):
-        course = data['course']
-        data.setdefault('credits', course_credits(course))
-        error = credits_range_error(course, data['credits'])
-        if error:
-            raise serializers.ValidationError({'credits': error})
+        data.setdefault('credits', course_credits(data['course']))
         return data
 
 

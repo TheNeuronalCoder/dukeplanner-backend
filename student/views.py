@@ -237,10 +237,10 @@ def _add_courses(request):
 
     Adds classes to the signed-in account. `semester` is the id of one of the
     account's semesters (use POST /student/semesters/ to add a class in a new
-    one). `credits` defaults to the course's credits and must be within its
-    range, and `credits_earned` (false if failed) defaults to true. A course
-    can't be listed twice in the same semester. Nothing is saved if any item is
-    invalid.
+    one). `credits` defaults to the course's credits and must be 1-9 (it
+    needn't match the catalog), and `credits_earned` (false if failed) defaults
+    to true. A course can't be listed twice in the same semester. Nothing is
+    saved if any item is invalid.
 
     Returns the new class ids (in request order) and the account's validation
     issues. Returns a 409 with the new errors, saving nothing, if the classes
