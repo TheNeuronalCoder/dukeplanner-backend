@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
-from account.serializers import ClassSerializer
+from account.serializers import ClassEntryField, ClassSerializer, CourseField
 from catalog.models import Program, Track
+from catalog.utils.courses import course_credits, credits_range_error
 
-from .models import Semester
+from .models import Class, Semester
+
+TERMS = ['fall', 'winter', 'spring', 'summer']
 
 
 class OwnedSemesterField(serializers.PrimaryKeyRelatedField):
@@ -13,9 +16,36 @@ class OwnedSemesterField(serializers.PrimaryKeyRelatedField):
         return Semester.objects.filter(account=self.context['request'].user)
 
 
+class OwnedClassField(serializers.PrimaryKeyRelatedField):
+    """A Class pk, limited to the requesting account's classes."""
+
+    def get_queryset(self):
+        return Class.objects.filter(account=self.context['request'].user).select_related('course')
+
+
 class AddCourseSerializer(ClassSerializer):
-    # Omit or null to leave the class unassigned.
-    semester = OwnedSemesterField(required=False, allow_null=True, default=None)
+    semester = OwnedSemesterField()
+
+
+class UpdateCourseSerializer(serializers.Serializer):
+    """The class to update and the fields to change. Changing the course without
+    giving `credits` resets them to the new course's credits."""
+
+    id = OwnedClassField()
+    course = CourseField(required=False)
+    semester = OwnedSemesterField(required=False)
+    credits = serializers.IntegerField(required=False, min_value=0)
+    credits_earned = serializers.BooleanField(required=False)
+
+    def validate(self, data):
+        cls = data['id']
+        if 'course' in data:
+            data.setdefault('credits', course_credits(data['course']))
+        if 'credits' in data:
+            error = credits_range_error(data.get('course', cls.course), data['credits'])
+            if error:
+                raise serializers.ValidationError({'credits': error})
+        return data
 
 
 class AddProgramSerializer(serializers.Serializer):
@@ -34,19 +64,35 @@ class AddProgramSerializer(serializers.Serializer):
 
 
 class AddSemesterSerializer(serializers.Serializer):
-    term = serializers.ChoiceField(choices=[t.lower() for t in Semester.Term.names])
+    term = serializers.ChoiceField(choices=TERMS)
     year = serializers.IntegerField(min_value=0)
+    # Semesters can't be empty, so each is added with its classes.
+    courses = serializers.ListField(child=ClassEntryField(), allow_empty=False)
+
+    def validate_courses(self, courses):
+        codes = [c['course'].pk for c in courses]
+        if len(set(codes)) != len(codes):
+            raise serializers.ValidationError('A course may only be listed once per semester.')
+        return courses
 
 
 class AddCoursesSerializer(serializers.ListSerializer):
     def validate(self, items):
         account = self.context['request'].user
-        keys = [(i['semester'] and i['semester'].pk, i['course'].pk) for i in items]
-        existing = set(
-            account.classes.filter(semester__isnull=False).values_list('semester_id', 'course_id')
-        )
-        if len(set(keys)) != len(keys) or any(k in existing for k in keys if k[0] is not None):
+        keys = [(i['semester'].pk, i['course'].pk) for i in items]
+        existing = set(account.classes.values_list('semester_id', 'course_id'))
+        if len(set(keys)) != len(keys) or existing.intersection(keys):
             raise serializers.ValidationError('A course may only be listed once per semester.')
+        return items
+
+
+class UpdateCoursesSerializer(serializers.ListSerializer):
+    # A course listed twice in a semester after the update is caught by
+    # account validation.
+    def validate(self, items):
+        ids = [i['id'].pk for i in items]
+        if len(set(ids)) != len(ids):
+            raise serializers.ValidationError('Each course may only be listed once.')
         return items
 
 
@@ -69,5 +115,5 @@ class AddSemestersSerializer(serializers.ListSerializer):
         return items
 
 
-def add_serializer(child, list_class, data, request):
+def list_serializer(child, list_class, data, request):
     return list_class(child=child(), data=data, context={'request': request}, allow_empty=False)

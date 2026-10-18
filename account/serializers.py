@@ -46,7 +46,7 @@ class ClassEntryField(serializers.Field):
 class SemesterSerializer(serializers.Serializer):
     term = serializers.ChoiceField(choices=[t.lower() for t in Semester.Term.names])
     year = serializers.IntegerField()
-    courses = serializers.ListField(child=ClassEntryField())
+    courses = serializers.ListField(child=ClassEntryField(), allow_empty=False)
 
 
 class SetupSerializer(serializers.Serializer):

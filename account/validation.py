@@ -4,7 +4,7 @@ An account is "valid and set up" when it has no ERROR-level issues:
 
   1. It pursues at least one degree (not just a minor/certificate).
   2. Its programs form a combination JMU allows.
-  3. It has at least one semester, and every semester is sane.
+  3. It has at least one semester, and every semester is sane and has classes.
   4. Every class is attached to a valid semester that belongs to the same account.
 
 All JMU-specific rules (program types, same-area groups, excluded combinations, ...)
@@ -354,7 +354,11 @@ def check_programs(student_programs, programs_with_tracks: set[str], config: Con
     return issues
 
 
-def check_semesters(semesters, config: Config, today: date | None = None) -> list[Issue]:
+def check_semesters(
+    semesters, config: Config, today: date | None = None, occupied: set[int] | None = None
+) -> list[Issue]:
+    """occupied: pks of the semesters that have classes; if given, the others
+    are flagged as empty."""
     today = today or date.today()
     max_year = today.year + config.max_years_ahead
     issues: list[Issue] = []
@@ -370,6 +374,8 @@ def check_semesters(semesters, config: Config, today: date | None = None) -> lis
                 f'{s}: year must be between {config.min_semester_year} and {max_year}.',
                 obj=s,
             ))
+        if occupied is not None and s.pk not in occupied:
+            issues.append(Issue('empty_semester', f'{s} has no classes.', obj=s))
     return issues
 
 
@@ -433,10 +439,10 @@ def validate_account(account, today: date | None = None, config: Config | None =
 
     issues: list[Issue] = []
     issues += check_programs(student_programs, programs_with_tracks, config)
-    issues += check_semesters(account.semesters.all(), config, today=today)
-    issues += check_classes(
-        account.pk, account.classes.select_related('semester', 'course'), config
-    )
+    classes = list(account.classes.select_related('semester', 'course'))
+    occupied = {c.semester_id for c in classes}
+    issues += check_semesters(account.semesters.all(), config, today=today, occupied=occupied)
+    issues += check_classes(account.pk, classes, config)
     return issues
 
 

@@ -16,23 +16,62 @@ from .serializers import (
     AddProgramsSerializer,
     AddSemesterSerializer,
     AddSemestersSerializer,
-    add_serializer,
+    UpdateCourseSerializer,
+    UpdateCoursesSerializer,
+    list_serializer,
 )
 from .summary import requirements_data, semesters_data
 
 
-@api_view(['GET'])
+def _dispatch(request, handlers):
+    return handlers[request.method](request)
+
+
+@api_view(['POST', 'PATCH', 'DELETE'])
+@parser_classes([JSONParser])
 @permission_classes([IsAuthenticated])
 def courses(request):
-    """GET /student/courses/
+    """/student/courses/
 
-    Returns the signed-in account's semesters in chronological order, each with
-    the courses taken in it. Classes not yet placed in a semester are listed
-    under `unassigned`. Each course's `credits` and `credits_earned` (false if
-    failed) are the student's; a semester's `credits_attempted` sums its classes'
-    credits and `credits_earned` sums those of the classes that were passed.
+    POST adds classes to the signed-in account, PATCH updates them and DELETE
+    removes them (see _add_courses, _update_courses and _delete_courses). The
+    classes are listed under `classes` in GET /student/requirements/.
     """
-    return JsonResponse(semesters_data(request.user))
+    return _dispatch(request, {
+        'POST': _add_courses,
+        'PATCH': _update_courses,
+        'DELETE': _delete_courses,
+    })
+
+
+@api_view(['POST', 'DELETE'])
+@parser_classes([JSONParser])
+@permission_classes([IsAuthenticated])
+def programs(request):
+    """/student/programs/
+
+    POST adds programs to the signed-in account and DELETE removes them (see
+    _add_programs and _delete_programs).
+    """
+    return _dispatch(request, {
+        'POST': _add_programs,
+        'DELETE': _delete_programs
+    })
+
+
+@api_view(['POST', 'DELETE'])
+@parser_classes([JSONParser])
+@permission_classes([IsAuthenticated])
+def semesters(request):
+    """/student/semesters/
+
+    POST adds semesters (with their classes) to the signed-in account and DELETE
+    removes them (see _add_semesters and _delete_semesters).
+    """
+    return _dispatch(request, {
+        'POST': _add_semesters,
+        'DELETE': _delete_semesters
+    })
 
 
 @api_view(['GET'])
@@ -58,19 +97,29 @@ def requirements(request):
     `shared_courses` maps each course counted by more than one program's own
     requirements to those programs' slugs, for checking overlap limits.
 
-    Returns a 409 with the ERROR-level issues if the account isn't set up and valid
-    (see account.validation).
+    `classes` holds the account's semesters in chronological order, each with
+    the courses taken in it; classes not yet placed in a semester are listed
+    under its `unassigned`. Each course's `id` is its class id (used by PATCH
+    and DELETE /student/courses/), and its `credits` and `credits_earned` (false
+    if failed) are the student's; a semester's `credits_attempted` sums its
+    classes' credits and `credits_earned` sums those of the classes that were
+    passed.
+
+    Returns a 409 with the ERROR-level issues and `classes` if the account isn't
+    set up and valid (see account.validation).
     """
+    classes = semesters_data(request.user)
     data, issues = requirements_data(request.user)
     if issues:
         return JsonResponse(
             {
                 'error': 'Account is not set up or is invalid.',
                 'issues': [_issue_json(i) for i in issues],
+                'classes': classes,
             },
             status=status.HTTP_409_CONFLICT,
         )
-    return JsonResponse(data)
+    return JsonResponse({**data, 'classes': classes})
 
 
 def _issue_json(i):
@@ -138,6 +187,18 @@ def _added(account, objs, noun):
     )
 
 
+def _updated(account, ids, noun):
+    return JsonResponse(
+        {'detail': f'{len(ids)} {noun} updated.', 'ids': ids, 'issues': _issues_json(account)}
+    )
+
+
+def _delete_emptied(account, semester_ids):
+    """Deletes the account's semesters with these ids that no longer have any
+    classes, since semesters can't be empty."""
+    account.semesters.filter(pk__in=semester_ids, classes=None).delete()
+
+
 def _delete_owned(request, queryset, noun, field='pk', delete=None):
     """Deletes every row of `queryset` (already limited to the caller's account)
     whose `field` is in the request body, a non-empty JSON list. If any value
@@ -171,19 +232,15 @@ def _delete_owned(request, queryset, noun, field='pk', delete=None):
     )
 
 
-@api_view(['POST'])
-@parser_classes([JSONParser])
-@permission_classes([IsAuthenticated])
-def add_courses(request):
-    """POST /student/courses/add/
+def _add_courses(request):
+    """POST /student/courses/
 
-    Adds classes to the signed-in account. `semester` is the pk of one of the
-    account's semesters. Omitting it or passing null leaves the class unassigned,
-    which validation flags as an error, so it's rejected (see below).
-    `credits` defaults to the course's credits and must be within its range, and
-    `credits_earned` (false if failed) defaults to true. A
-    course can't be listed twice in the same semester. Nothing is saved if any
-    item is invalid.
+    Adds classes to the signed-in account. `semester` is the id of one of the
+    account's semesters (use POST /student/semesters/ to add a class in a new
+    one). `credits` defaults to the course's credits and must be within its
+    range, and `credits_earned` (false if failed) defaults to true. A course
+    can't be listed twice in the same semester. Nothing is saved if any item is
+    invalid.
 
     Returns the new class ids (in request order) and the account's validation
     issues. Returns a 409 with the new errors, saving nothing, if the classes
@@ -192,11 +249,10 @@ def add_courses(request):
     Sample request body:
     [
         {"course": "CS 149", "semester": 3},
-        {"course": "IND 499", "semester": 3, "credits": 2, "credits_earned": false},
-        {"course": "MATH 235"}
+        {"course": "IND 499", "semester": 3, "credits": 2, "credits_earned": false}
     ]
     """
-    serializer = add_serializer(AddCourseSerializer, AddCoursesSerializer, request.data, request)
+    serializer = list_serializer(AddCourseSerializer, AddCoursesSerializer, request.data, request)
     serializer.is_valid(raise_exception=True)
 
     account = request.user
@@ -215,14 +271,71 @@ def add_courses(request):
     return _added(account, classes, 'courses')
 
 
-@api_view(['POST'])
-@parser_classes([JSONParser])
-@permission_classes([IsAuthenticated])
-def add_programs(request):
-    """POST /student/programs/add/
+def _update_courses(request):
+    """PATCH /student/courses/
+
+    Updates the signed-in account's classes: each item has the class `id` and
+    any of `course`, `semester`, `credits` and `credits_earned` to change.
+    Changing `course` without giving `credits` resets them to the new course's
+    credits. Semesters left without classes by a move are deleted. Nothing is
+    saved if any item is invalid.
+
+    Returns the updated class ids and the account's validation issues. Returns a
+    409 with the new errors, saving nothing, if the changes would make the
+    account invalid (e.g. a course listed twice in a semester).
+
+    Sample request body:
+    [
+        {"id": 12, "semester": 4},
+        {"id": 13, "credits": 2, "credits_earned": false}
+    ]
+    """
+    serializer = list_serializer(UpdateCourseSerializer, UpdateCoursesSerializer, request.data, request)
+    serializer.is_valid(raise_exception=True)
+
+    account = request.user
+
+    def change():
+        left = set()
+        for item in serializer.validated_data:
+            c = item['id']
+            if 'semester' in item and item['semester'].pk != c.semester_id:
+                left.add(c.semester_id)
+            for field, value in item.items():
+                if field != 'id':
+                    setattr(c, field, value)
+            c.save()
+        _delete_emptied(account, left)
+
+    _, rejected = _guarded(account, change)
+    if rejected:
+        return rejected
+    return _updated(account, [i['id'].pk for i in serializer.validated_data], 'courses')
+
+
+def _delete_courses(request):
+    """DELETE /student/courses/ [1, 2, 3]
+
+    Deletes the signed-in account's classes with these ids (the `id` of each
+    course under `classes` in GET /student/requirements/), along with any semesters left empty.
+    Returns a 409, deleting nothing, if that would make the account invalid
+    (e.g. deleting every class of its only semester).
+    """
+    account = request.user
+
+    def delete(classes):
+        semester_ids = set(classes.exclude(semester=None).values_list('semester_id', flat=True))
+        classes.delete()
+        _delete_emptied(account, semester_ids)
+
+    return _delete_owned(request, account.classes.all(), 'courses', delete=delete)
+
+
+def _add_programs(request):
+    """POST /student/programs/
 
     Adds programs (by slug) to the signed-in account, each with an optional
-    track pk that must belong to that program. A program the account already
+    track id that must belong to that program. A program the account already
     has can't be added again. Nothing is saved if any item is invalid.
 
     Returns the new program slugs and the account's validation issues. Returns
@@ -235,7 +348,7 @@ def add_programs(request):
         {"program": "mathematics-minor", "track": 12}
     ]
     """
-    serializer = add_serializer(AddProgramSerializer, AddProgramsSerializer, request.data, request)
+    serializer = list_serializer(AddProgramSerializer, AddProgramsSerializer, request.data, request)
     serializer.is_valid(raise_exception=True)
 
     account = request.user
@@ -249,72 +362,8 @@ def add_programs(request):
     return _added(account, programs, 'programs')
 
 
-@api_view(['POST'])
-@parser_classes([JSONParser])
-@permission_classes([IsAuthenticated])
-def add_semesters(request):
-    """POST /student/semesters/add/
-
-    Adds semesters to the signed-in account. A term/year the account already
-    has can't be added again. Nothing is saved if any item is invalid.
-
-    Returns the new semester ids (in request order) and the account's
-    validation issues. Returns a 409 with the new errors, saving nothing, if the
-    semesters would make the account invalid (e.g. a year out of range).
-
-    Sample request body:
-    [
-        {"term": "fall", "year": 2025},
-        {"term": "spring", "year": 2026}
-    ]
-    """
-    serializer = add_serializer(AddSemesterSerializer, AddSemestersSerializer, request.data, request)
-    serializer.is_valid(raise_exception=True)
-
-    account = request.user
-    semesters, rejected = _guarded(account, lambda: Semester.objects.bulk_create(
-        Semester(
-            account=account,
-            term=Semester.Term[i['term'].upper()],
-            year=i['year'],
-        )
-        for i in serializer.validated_data
-    ))
-    if rejected:
-        return rejected
-    return _added(account, semesters, 'semesters')
-
-
-@api_view(['DELETE'])
-@parser_classes([JSONParser])
-@permission_classes([IsAuthenticated])
-def delete_courses(request):
-    """DELETE /student/courses/delete/ [1, 2, 3]
-
-    Deletes the signed-in account's classes with these ids (the `id` of each
-    course in GET /student/courses/), along with any semesters left empty,
-    except that the account always keeps at least one semester. Returns a 409,
-    deleting nothing, if that would make the account invalid.
-    """
-    account = request.user
-
-    def delete(classes):
-        semester_ids = set(classes.exclude(semester=None).values_list('semester_id', flat=True))
-        classes.delete()
-        emptied = account.semesters.filter(pk__in=semester_ids, classes=None)
-        if emptied and emptied.count() == account.semesters.count():
-            # Keep the latest so the account isn't left without a semester.
-            emptied = emptied.exclude(pk=emptied.order_by('-year', '-term').first().pk)
-        emptied.delete()
-
-    return _delete_owned(request, account.classes.all(), 'courses', delete=delete)
-
-
-@api_view(['DELETE'])
-@parser_classes([JSONParser])
-@permission_classes([IsAuthenticated])
-def delete_programs(request):
-    """DELETE /student/programs/delete/ ["computer-science-bs"]
+def _delete_programs(request):
+    """DELETE /student/programs/ ["computer-science-bs"]
 
     Removes these programs (by slug) from the signed-in account. Returns a 409,
     removing nothing, if that would make the account invalid (e.g. removing its
@@ -323,11 +372,58 @@ def delete_programs(request):
     return _delete_owned(request, request.user.programs.all(), 'programs', field='program_id')
 
 
-@api_view(['DELETE'])
-@parser_classes([JSONParser])
-@permission_classes([IsAuthenticated])
-def delete_semesters(request):
-    """DELETE /student/semesters/delete/ [1, 2]
+def _add_semesters(request):
+    """POST /student/semesters/
+
+    Adds semesters to the signed-in account along with their classes, since a
+    semester can't be empty. Each course is an object like those of POST
+    /student/courses/ (without `semester`), or a bare course code for the
+    defaults. A term/year the account already has can't be added again, and a
+    course can't be listed twice in a semester. Nothing is saved if any item is
+    invalid.
+
+    Returns the new semester ids (in request order) and the account's
+    validation issues. Returns a 409 with the new errors, saving nothing, if the
+    semesters would make the account invalid (e.g. a year out of range).
+
+    Sample request body:
+    [
+        {"term": "fall", "year": 2025, "courses": ["CS 149", {"course": "MATH 235", "credits_earned": false}]},
+        {"term": "spring", "year": 2026, "courses": [{"course": "IND 499", "credits": 2}]}
+    ]
+    """
+    serializer = list_serializer(AddSemesterSerializer, AddSemestersSerializer, request.data, request)
+    serializer.is_valid(raise_exception=True)
+
+    account = request.user
+    items = serializer.validated_data
+
+    def change():
+        semesters = Semester.objects.bulk_create(
+            Semester(account=account, term=Semester.Term[i['term'].upper()], year=i['year'])
+            for i in items
+        )
+        Class.objects.bulk_create(
+            Class(
+                account=account,
+                semester=s,
+                course=c['course'],
+                credits=c['credits'],
+                credits_earned=c['credits_earned'],
+            )
+            for s, i in zip(semesters, items)
+            for c in i['courses']
+        )
+        return semesters
+
+    semesters, rejected = _guarded(account, change)
+    if rejected:
+        return rejected
+    return _added(account, semesters, 'semesters')
+
+
+def _delete_semesters(request):
+    """DELETE /student/semesters/ [1, 2]
 
     Deletes the signed-in account's semesters with these ids, along with the
     classes placed in them. Returns a 409, deleting nothing, if that would make

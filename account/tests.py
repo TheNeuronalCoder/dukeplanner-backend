@@ -241,7 +241,7 @@ class SetupTests(APITestCase):
         self.assertEqual((classes['CS 499'].credits, classes['CS 499'].credits_earned), (4, True))
         self.assertEqual((classes['MATH 235'].credits, classes['MATH 235'].credits_earned), (3, True))
 
-        semester = self.client.get('/student/courses/').json()['semesters'][0]
+        semester = self.client.get('/student/requirements/').json()['classes']['semesters'][0]
         self.assertEqual((semester['credits_attempted'], semester['credits_earned']), (10, 7))
 
     def test_variable_credits_default_to_minimum(self):

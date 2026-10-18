@@ -13,12 +13,12 @@ from catalog.utils.requirements import evaluate_program
 
 
 def semesters_data(account):
-    """The body of GET /student/courses/ (see student.views.courses)."""
+    """The `classes` of GET /student/requirements/ (see student.views.requirements)."""
     classes = account.classes.select_related('course').order_by('course__prefix_id', 'course__number')
 
     by_semester = defaultdict(list)
     for c in classes:
-        # `id` is the Class pk, used by DELETE /student/courses/delete/.
+        # `id` is the Class pk, used by PATCH and DELETE /student/courses/.
         by_semester[c.semester_id].append({
             'id': c.pk,
             **course_json(c.course, details=True),
